@@ -46,6 +46,10 @@ class Tokenizer
             $tokenAttributes = explode(" ", $expression[1]);
             $tokenName = array_shift($tokenAttributes);
 
+            if(!in_array($tokenName,Grammar::KEYWORDS)) {
+                throw new InvalidArgumentException(implode(',', Grammar::KEYWORDS), $tokenName);
+            }
+
             $tokenAttributesArray = [];
 
             foreach($tokenAttributes as $tokenAttribute) {
