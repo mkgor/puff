@@ -10,6 +10,14 @@ namespace Puff\Tokenization;
  */
 class Grammar
 {
+    const KEYWORDS = [
+        'import',
+        'use',
+        'if',
+        'for',
+        'else',
+    ];
+
     const EXPRESSION_SIGNATURE = ['[',']'];
     const PRINT_SIGNATURE = ['{','}'];
 
