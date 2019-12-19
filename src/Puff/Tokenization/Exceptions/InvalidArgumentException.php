@@ -14,10 +14,11 @@ class InvalidArgumentException extends PuffException
      * InvalidArgumentException constructor.
      * @param $excepted
      * @param $got
+     * @param $class
      * @param int $code
      */
-    public function __construct($excepted, $got, $code = 500)
+    public function __construct($excepted, $got, $class = 'template engine', $code = 500)
     {
-        parent::__construct(sprintf("Invalid argument passed to %s, expected %s - got %s", get_called_class(), $excepted, $got), $code);
+        parent::__construct(sprintf("Invalid argument passed to %s, expected %s - got %s", $class, $excepted, $got), $code);
     }
 }

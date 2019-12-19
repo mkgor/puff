@@ -17,6 +17,6 @@ class PuffException extends \Exception
      */
     public function __construct($message = "", $code = 500)
     {
-        parent::__construct(sprintf("Puff stopped its work with message: %s", $message), $code);
+        parent::__construct(sprintf("Puff stopped script with message: %s", $message), $code);
     }
 }
