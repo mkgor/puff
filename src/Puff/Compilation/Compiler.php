@@ -6,7 +6,7 @@ use Puff\Compilation\Element\ElementInterface;
 use Puff\Exception\InvalidKeywordException;
 use Puff\Exception\PuffException;
 use Puff\Tokenization\Entity\Token;
-use Puff\Tokenization\Repository\TokenRepository;
+use Puff\Tokenization\Repository\TokenRepositoryInterface;
 
 /**
  * Class Compiler
@@ -17,7 +17,7 @@ class Compiler
     /**
      * Replaces all tokens in the template by PHP code
      *
-     * @param TokenRepository $tokenRepository
+     * @param TokenRepositoryInterface $tokenRepository
      * @param string $templateString
      *
      * @return mixed|string
@@ -25,7 +25,7 @@ class Compiler
      * @throws InvalidKeywordException
      * @throws PuffException
      */
-    public function compile(TokenRepository $tokenRepository, $templateString)
+    public function compile(TokenRepositoryInterface $tokenRepository, $templateString)
     {
         /** @var Token $token */
         foreach($tokenRepository->getContainer() as $token) {
@@ -41,8 +41,14 @@ class Compiler
                 throw new PuffException('Invalid element provided to compiler');
             }
 
+            /**
+             * Calling class, which is responsible for processing this token
+             *
+             * @var string $compiledElement
+             */
             $compiledElement = $elementClass->process($token->getAttributes());
 
+            /** Replacing tokens by PHP code */
             $templateString = str_replace($token->getFullToken(), $compiledElement, $templateString);
         }
 
