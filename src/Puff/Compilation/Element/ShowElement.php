@@ -8,7 +8,7 @@ use Puff\Exception\PuffException;
  * Class Show
  * @package Puff\Compilation\Element
  */
-class Show implements ElementInterface
+class ShowElement implements ElementInterface
 {
     /**
      * @param array $attributes

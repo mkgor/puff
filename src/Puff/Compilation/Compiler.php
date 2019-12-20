@@ -29,7 +29,7 @@ class Compiler
     {
         /** @var Token $token */
         foreach($tokenRepository->getContainer() as $token) {
-            $elementClass = "\Puff\Compilation\Element\\" . ucfirst($token->getTokenName());
+            $elementClass = "\Puff\Compilation\Element\\" . ucfirst($token->getTokenName()) ."Element";
 
             if(!class_exists($elementClass)) {
                 throw new InvalidKeywordException($token->getTokenName(), __CLASS__);

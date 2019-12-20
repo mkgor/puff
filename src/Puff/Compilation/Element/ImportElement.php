@@ -3,6 +3,7 @@
 namespace Puff\Compilation\Element;
 
 use Puff\Compilation\Compiler;
+use Puff\Exception\InvalidKeywordException;
 use Puff\Registry;
 use Puff\Exception\InvalidArgumentException;
 use Puff\Exception\PuffException;
@@ -13,14 +14,14 @@ use Puff\Tokenization\Tokenizer;
  * Class Import
  * @package Puff\Compilation\Element
  */
-class Import implements ElementInterface
+class ImportElement implements ElementInterface
 {
     /**
      * @param array $attributes
      * @return mixed
      * @throws InvalidArgumentException
-     * @throws \Puff\Exception\InvalidKeywordException
-     * @throws \Puff\Exception\PuffException
+     * @throws InvalidKeywordException
+     * @throws PuffException
      */
     public function process(array $attributes)
     {
