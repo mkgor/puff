@@ -34,6 +34,27 @@ class Renderer
     private $renderedTemplateString;
 
     /**
+     * @var bool
+     */
+    private $benchmarkEnabled = false;
+
+    /**
+     * @return bool
+     */
+    public function isBenchmarkEnabled()
+    {
+        return $this->benchmarkEnabled;
+    }
+
+    /**
+     * @param bool $benchmarkEnabled
+     */
+    public function setBenchmarkEnabled($benchmarkEnabled)
+    {
+        $this->benchmarkEnabled = $benchmarkEnabled;
+    }
+
+    /**
      * @return string
      */
     public function getRenderedTemplateString()
@@ -108,6 +129,9 @@ class Renderer
      */
     public function render($template, array $vars = [])
     {
+        $startingMark = microtime(true);
+        $startingMemoryUsage = memory_get_usage();
+
         $tokenizer = new Tokenizer($this->getTokenRepository());
         $compiler = new Compiler();
 
@@ -132,6 +156,18 @@ class Renderer
             }
         } else {
             throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
+        }
+
+        $endingMark = microtime(true);
+        $endingMemoryUsage = memory_get_usage();
+
+        $benchmarkResults = [
+            'time' => $endingMark - $startingMark,
+            'memory-usage' => $endingMemoryUsage - $startingMemoryUsage
+        ];
+
+        if($this->isBenchmarkEnabled()) {
+            var_dump($benchmarkResults);
         }
 
         /** Returning compiled HTML code */
