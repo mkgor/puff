@@ -6,6 +6,7 @@ use Puff\Exception\InvalidKeywordException;
 use Puff\Tokenization\Entity\Token;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Exception\InvalidArgumentException;
+use Puff\Tokenization\Repository\TokenRepositoryInterface;
 
 /**
  * Class Tokenizer
@@ -19,7 +20,7 @@ class Tokenizer
      */
     private $tokenRepository;
 
-    public function __construct(TokenRepository $tokenRepository)
+    public function __construct(TokenRepositoryInterface $tokenRepository)
     {
         $this->tokenRepository = $tokenRepository;
     }
@@ -28,7 +29,9 @@ class Tokenizer
      * Parses string and gets tokens from it
      *
      * @param $string
-     * @return TokenRepository
+     *
+     * @return TokenRepositoryInterface
+     *
      * @throws InvalidArgumentException
      * @throws InvalidKeywordException
      */
