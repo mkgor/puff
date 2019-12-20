@@ -1,2 +1,2 @@
 # Puff
-Flexible and lightweight template enigne for PHP
+Flexible and lightweight template engine for PHP
