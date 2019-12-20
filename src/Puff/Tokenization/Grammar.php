@@ -12,6 +12,7 @@ class Grammar
 {
     const KEYWORDS = [
         'import',
+        'show',
         'use',
         'if',
         'for',
