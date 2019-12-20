@@ -20,15 +20,22 @@ class Token
     private $attributes;
 
     /**
+     * @var string
+     */
+    private $fullToken;
+
+    /**
      * Token constructor.
      *
      * @param string $tokenName
-     * @param array  $attributes
+     * @param array $attributes
+     * @param string $fullToken
      */
-    public function __construct($tokenName, array $attributes)
+    public function __construct($tokenName, array $attributes, $fullToken)
     {
         $this->tokenName = $tokenName;
         $this->attributes = $attributes;
+        $this->fullToken = $fullToken;
     }
 
     /**
@@ -62,6 +69,24 @@ class Token
     {
         $this->attributes = $attributes;
     }
+
+    /**
+     * @return string
+     */
+    public function getFullToken()
+    {
+        return $this->fullToken;
+    }
+
+    /**
+     * @param string $fullToken
+     */
+    public function setFullToken($fullToken)
+    {
+        $this->fullToken = $fullToken;
+    }
+
+
 
     /**
      * Builds an array using object's properties

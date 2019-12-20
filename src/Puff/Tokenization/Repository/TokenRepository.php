@@ -1,7 +1,9 @@
 <?php
 
 
-namespace Puff\Tokenization\Entity;
+namespace Puff\Tokenization\Repository;
+
+use Puff\Tokenization\Entity\Token;
 
 /**
  * Class TokenRepository
