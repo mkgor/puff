@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Puff\Tokenization\Repository;
 
 use Puff\Tokenization\Entity\Token;
@@ -10,7 +9,7 @@ use Puff\Tokenization\Entity\Token;
  *
  * @package Tokenization\Entity
  */
-class TokenRepository
+class TokenRepository implements TokenRepositoryInterface
 {
     protected $container;
 
