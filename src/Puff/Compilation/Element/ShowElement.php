@@ -24,6 +24,6 @@ class ShowElement extends AbstractElement
         }
 
         /** Building PHP snippet which will display data from variable  */
-        exit(sprintf("<?php echo %s; ?>", VariableTransliterator::transliterate($attributes['data-source'])));
+        return sprintf("<?php echo %s; ?>", VariableTransliterator::transliterate($attributes['data-source']));
     }
 }
