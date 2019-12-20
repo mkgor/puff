@@ -25,7 +25,7 @@
 [use "NewDataFiltersExtension"]  
 @endhead
 
-[import "base"]
+[import src="base.puff.html"]
 <main>
   <div class="wrapper">
     <h1>Hello, { user.getUsername ~ upperCase }</h1>
