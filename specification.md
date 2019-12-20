@@ -2,7 +2,7 @@
 
 #### Grammatic rules
 - **[** , **]**  - expression token.
-- **[% variable %]** - print variable
+- **{ variable }** - print variable
 
 #### Methods
 
@@ -28,13 +28,13 @@
 [import "base"]
 <main>
   <div class="wrapper">
-    <h1>Hello, [% user.getUsername ~ upperCase %]</h1>
-    <time>[% currentTime ~ toISO %]</time>
+    <h1>Hello, { user.getUsername ~ upperCase }</h1>
+    <time>{ currentTime ~ toISO }</time>
 
     <div class="messages">
       [for messages as message]
         <div class="message">
-          [% message.content %]
+          { message.content }
         </div>
       [endfor]
     </div>
