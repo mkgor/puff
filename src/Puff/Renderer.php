@@ -5,12 +5,15 @@ namespace Puff;
 
 
 use Puff\Compilation\Compiler;
+use Puff\Registry;
 use Puff\Exception\PuffException;
 use Puff\Tokenization\Repository\TokenRepository;
+use Puff\Tokenization\Repository\TokenRepositoryInterface;
 use Puff\Tokenization\Tokenizer;
 
 /**
  * Class Renderer
+ *
  * @package Puff
  */
 class Renderer
@@ -63,7 +66,7 @@ class Renderer
     }
 
     /**
-     * @return TokenRepository
+     * @return TokenRepositoryInterface
      */
     public function getTokenRepository()
     {
@@ -71,16 +74,23 @@ class Renderer
     }
 
     /**
-     * @param TokenRepository $tokenRepository
+     * @param TokenRepositoryInterface $tokenRepository
      */
-    public function setTokenRepository(TokenRepository $tokenRepository)
+    public function setTokenRepository(TokenRepositoryInterface $tokenRepository)
     {
         $this->tokenRepository = $tokenRepository;
     }
 
-
+    /**
+     * Renderer constructor.
+     */
     public function __construct()
     {
+        /**
+         * Initializing default TokenRepository class, it can be replaced by calling `setTokenRepository` before rendering
+         *
+         * @var TokenRepository tokenRepository
+         */
         $this->tokenRepository = new TokenRepository();
     }
 
@@ -101,15 +111,20 @@ class Renderer
         $tokenizer = new Tokenizer($this->getTokenRepository());
         $compiler = new Compiler();
 
+        /** Injecting variables into the template */
         extract($vars);
 
+        /** Starting output buffering */
         ob_start();
 
         if (file_exists($this->getTemplatesPath() . $template)) {
             $templateString = file_get_contents($this->getTemplatesPath() . $template);
 
+            Registry::add('template_path', $this->getTemplatesPath());
+
             $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
 
+            /** Trying to run compiled template with `eval` */
             try {
                 eval("?>" . $this->getRenderedTemplateString() . "<?");
             } catch (\Exception $e) {
@@ -119,6 +134,7 @@ class Renderer
             throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
         }
 
+        /** Returning compiled HTML code */
         return ob_get_clean();
     }
 }
