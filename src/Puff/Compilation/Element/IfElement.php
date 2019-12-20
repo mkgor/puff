@@ -1,11 +1,14 @@
 <?php
 
-
 namespace Puff\Compilation\Element;
-
 
 use Puff\Compilation\Services\VariableTransliterator;
 
+/**
+ * Class IfElement
+ *
+ * @package Puff\Compilation\Element
+ */
 class IfElement extends AbstractElement
 {
 
@@ -15,13 +18,19 @@ class IfElement extends AbstractElement
      */
     public function process(array $attributes)
     {
-        $predicate = preg_replace_callback('/\b(?:(?!null|true|false|or|and|isset|empty)[a-zA-Z][a-zA-Z0-9]+)+\b/', function($item) {
-            return VariableTransliterator::transliterate($item);
+        /** Checking predicate for PHP keywords and transliterating variables from Puff syntax to PHP */
+        $predicate = preg_replace_callback('/\b(?:(?!null|true|false|or|and|isset|empty)(?!\"])[a-zA-Z][a-zA-Z.(->)0-9]+(?!\")+)+\b/', function($item) {
+            return VariableTransliterator::transliterate($item[0]);
         }, $attributes['predicate']);
 
-        return sprintf("<?php if(%s) { ?>", );
+        return sprintf("<?php if(%s) { ?>", $predicate);
     }
 
+    /**
+     * @param $tokenAttributes
+     *
+     * @return array
+     */
     public function handleAttributes($tokenAttributes)
     {
         return ["predicate" => implode(" ", $tokenAttributes)];
