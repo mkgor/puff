@@ -1,8 +1,6 @@
 <?php
 
-namespace Puff\Tokenization\Exceptions;
-
-use Puff\Exceptions\PuffException;
+namespace Puff\Exception;
 
 /**
  * Class InvalidArgumentException
@@ -12,6 +10,7 @@ class InvalidArgumentException extends PuffException
 {
     /**
      * InvalidArgumentException constructor.
+     *
      * @param $excepted
      * @param $got
      * @param $class

@@ -1,14 +1,14 @@
 <?php
 
-namespace Puff\Exceptions;
+namespace Puff\Exception;
 
-use Throwable;
+use Exception;
 
 /**
  * Class PuffException
  * @package Exceptions
  */
-class PuffException extends \Exception
+class PuffException extends Exception
 {
     /**
      * PuffException constructor.
