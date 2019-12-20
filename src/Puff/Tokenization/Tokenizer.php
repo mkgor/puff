@@ -51,7 +51,7 @@ class Tokenizer
         preg_match_all("/{$printRegexp}/m", $string, $print, PREG_SET_ORDER, 0);
 
         foreach($expressions as $expression) {
-            $tokenAttributes = explode(" ", $expression[1]);
+            $tokenAttributes = explode(" ", trim($expression[1]));
             $tokenName = array_shift($tokenAttributes);
 
             $elementClass = "\Puff\Compilation\Element\\" . $tokenName ."Element";
@@ -79,7 +79,7 @@ class Tokenizer
 
         foreach($print as $item) {
             $this->tokenRepository->push(new Token('show',[
-                'data-source' => $item[1]
+                'data-source' => trim($item[1])
             ], $item[0]));
         }
 
