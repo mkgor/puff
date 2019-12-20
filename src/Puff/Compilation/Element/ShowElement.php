@@ -2,13 +2,14 @@
 
 namespace Puff\Compilation\Element;
 
+use Puff\Compilation\Services\VariableTransliterator;
 use Puff\Exception\PuffException;
 
 /**
  * Class Show
  * @package Puff\Compilation\Element
  */
-class ShowElement implements ElementInterface
+class ShowElement extends AbstractElement
 {
     /**
      * @param array $attributes
@@ -23,8 +24,6 @@ class ShowElement implements ElementInterface
         }
 
         /** Building PHP snippet which will display data from variable  */
-        return "<?php echo $" . preg_replace_callback('/\.(?<var>\w+)/', function ($result) {
-            return "['{$result['var']}']";
-        }, $attributes['data-source']) . '; ?>';
+        exit(sprintf("<?php echo %s; ?>", VariableTransliterator::transliterate($attributes['data-source'])));
     }
 }

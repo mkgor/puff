@@ -4,7 +4,9 @@
 namespace Puff\Compilation\Element;
 
 
-class IfElement implements ElementInterface
+use Puff\Compilation\Services\VariableTransliterator;
+
+class IfElement extends AbstractElement
 {
 
     /**
@@ -13,6 +15,15 @@ class IfElement implements ElementInterface
      */
     public function process(array $attributes)
     {
-        // TODO: Implement process() method.
+        $predicate = preg_replace_callback('/\b(?:(?!null|true|false|or|and|isset|empty)[a-zA-Z][a-zA-Z0-9]+)+\b/', function($item) {
+            return VariableTransliterator::transliterate($item);
+        }, $attributes['predicate']);
+
+        return sprintf("<?php if(%s) { ?>", );
+    }
+
+    public function handleAttributes($tokenAttributes)
+    {
+        return ["predicate" => implode(" ", $tokenAttributes)];
     }
 }

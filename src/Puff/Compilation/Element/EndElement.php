@@ -3,16 +3,18 @@
 
 namespace Puff\Compilation\Element;
 
-
-class ForElement extends AbstractElement
+/**
+ * Class EndElement
+ * @package Puff\Compilation\Element
+ */
+class EndElement extends AbstractElement
 {
-
     /**
      * @param array $attributes
      * @return mixed
      */
     public function process(array $attributes)
     {
-        // TODO: Implement process() method.
+        return "<?php } ?>";
     }
 }

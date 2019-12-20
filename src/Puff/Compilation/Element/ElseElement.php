@@ -4,7 +4,7 @@
 namespace Puff\Compilation\Element;
 
 
-class ElseElement implements ElementInterface
+class ElseElement extends AbstractElement
 {
 
     /**

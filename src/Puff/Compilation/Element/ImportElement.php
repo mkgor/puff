@@ -14,7 +14,7 @@ use Puff\Tokenization\Tokenizer;
  * Class Import
  * @package Puff\Compilation\Element
  */
-class ImportElement implements ElementInterface
+class ImportElement extends AbstractElement
 {
     /**
      * @param array $attributes
