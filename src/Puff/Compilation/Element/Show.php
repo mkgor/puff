@@ -1,11 +1,13 @@
 <?php
 
-
 namespace Puff\Compilation\Element;
-
 
 use Puff\Exception\PuffException;
 
+/**
+ * Class Show
+ * @package Puff\Compilation\Element
+ */
 class Show implements ElementInterface
 {
     /**
@@ -20,6 +22,7 @@ class Show implements ElementInterface
             throw new PuffException('Expected data-source to print value');
         }
 
+        /** Building PHP snippet which will display data from variable  */
         return "<?php echo $" . preg_replace_callback('/\.(?<var>\w+)/', function ($result) {
             return "['{$result['var']}']";
         }, $attributes['data-source']) . '; ?>';
