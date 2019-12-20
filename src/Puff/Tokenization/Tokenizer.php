@@ -2,7 +2,9 @@
 
 namespace Puff\Tokenization;
 
+use Puff\Compilation\Element\ElementInterface;
 use Puff\Exception\InvalidKeywordException;
+use Puff\Exception\PuffException;
 use Puff\Tokenization\Entity\Token;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Exception\InvalidArgumentException;
@@ -34,6 +36,7 @@ class Tokenizer
      *
      * @throws InvalidArgumentException
      * @throws InvalidKeywordException
+     * @throws PuffException
      */
     public function tokenize($string)
     {
@@ -51,17 +54,24 @@ class Tokenizer
             $tokenAttributes = explode(" ", $expression[1]);
             $tokenName = array_shift($tokenAttributes);
 
+            $elementClass = "\Puff\Compilation\Element\\" . $tokenName ."Element";
+
+            if(!class_exists($elementClass)) {
+                throw new InvalidKeywordException($tokenName, __CLASS__);
+            }
+
+            /** @var ElementInterface $elementClass */
+            $elementClass = new $elementClass;
+
+            if(!($elementClass instanceof ElementInterface)) {
+                throw new PuffException('Invalid element provided to compiler');
+            }
+
             if(!in_array($tokenName,Grammar::KEYWORDS)) {
                 throw new InvalidKeywordException($tokenName, __CLASS__);
             }
 
-            $tokenAttributesArray = [];
-
-            foreach($tokenAttributes as $tokenAttribute) {
-                list($attribute, $value) = explode(Grammar::EQUALITY_SIGNATURE, $tokenAttribute);
-
-                $tokenAttributesArray[$attribute] = trim($value, '\'"');
-            }
+            $tokenAttributesArray = $elementClass->handleAttributes($tokenAttributes);
 
             $token = new Token($tokenName, $tokenAttributesArray, $expression[0]);
             $this->tokenRepository->push($token);
