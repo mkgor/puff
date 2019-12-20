@@ -17,11 +17,12 @@ class Grammar
         'if',
         'for',
         'else',
-        'end'
+        'end',
+        'set'
     ];
 
-    const EXPRESSION_SIGNATURE = ['[',']'];
-    const PRINT_SIGNATURE = ['{','}'];
+    const EXPRESSION_SIGNATURE = ['[%','%]'];
+    const PRINT_SIGNATURE = ['[[',']]'];
 
     const HEAD_SIGNATURE = ['@head','@endhead'];
     const EQUALITY_SIGNATURE = '=';

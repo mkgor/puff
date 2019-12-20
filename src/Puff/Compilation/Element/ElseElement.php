@@ -13,6 +13,6 @@ class ElseElement extends AbstractElement
      */
     public function process(array $attributes)
     {
-        // TODO: Implement process() method.
+        return "<?php } else { ?>";
     }
 }
