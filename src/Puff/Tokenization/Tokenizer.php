@@ -2,9 +2,10 @@
 
 namespace Puff\Tokenization;
 
+use Puff\Exception\InvalidKeywordException;
 use Puff\Tokenization\Entity\Token;
-use Puff\Tokenization\Entity\TokenRepository;
-use Puff\Tokenization\Exceptions\InvalidArgumentException;
+use Puff\Tokenization\Repository\TokenRepository;
+use Puff\Exception\InvalidArgumentException;
 
 /**
  * Class Tokenizer
@@ -29,6 +30,7 @@ class Tokenizer
      * @param $string
      * @return TokenRepository
      * @throws InvalidArgumentException
+     * @throws InvalidKeywordException
      */
     public function tokenize($string)
     {
@@ -47,7 +49,7 @@ class Tokenizer
             $tokenName = array_shift($tokenAttributes);
 
             if(!in_array($tokenName,Grammar::KEYWORDS)) {
-                throw new InvalidArgumentException(implode(',', Grammar::KEYWORDS), $tokenName);
+                throw new InvalidKeywordException($tokenName, __CLASS__);
             }
 
             $tokenAttributesArray = [];
@@ -58,8 +60,14 @@ class Tokenizer
                 $tokenAttributesArray[$attribute] = trim($value, '\'"');
             }
 
-            $token = new Token($tokenName, $tokenAttributesArray);
+            $token = new Token($tokenName, $tokenAttributesArray, $expression[0]);
             $this->tokenRepository->push($token);
+        }
+
+        foreach($print as $item) {
+            $this->tokenRepository->push(new Token('show',[
+                'data-source' => $item[1]
+            ], $item[0]));
         }
 
         return $this->tokenRepository;
