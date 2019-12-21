@@ -2,6 +2,7 @@
 
 namespace Puff\Tokenization;
 
+use Puff\Factory\ElementClassFactory;
 use Puff\Compilation\Element\ElementInterface;
 use Puff\Exception\InvalidKeywordException;
 use Puff\Exception\PuffException;
@@ -54,22 +55,8 @@ class Tokenizer
             $tokenAttributes = explode(" ", trim($expression[1]));
             $tokenName = array_shift($tokenAttributes);
 
-            $elementClass = "\Puff\Compilation\Element\\" . $tokenName ."Element";
-
-            if(!class_exists($elementClass)) {
-                throw new InvalidKeywordException($tokenName, __CLASS__);
-            }
-
-            /** @var ElementInterface $elementClass */
-            $elementClass = new $elementClass;
-
-            if(!($elementClass instanceof ElementInterface)) {
-                throw new PuffException('Invalid element provided to compiler');
-            }
-
-            if(!in_array($tokenName,Grammar::KEYWORDS)) {
-                throw new InvalidKeywordException($tokenName, __CLASS__);
-            }
+            $elementClassFactory = new ElementClassFactory();
+            $elementClass = $elementClassFactory->getElementClass($tokenName);
 
             $tokenAttributesArray = $elementClass->handleAttributes($tokenAttributes);
 
