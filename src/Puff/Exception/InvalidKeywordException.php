@@ -2,6 +2,7 @@
 
 namespace Puff\Exception;
 
+use Puff\Registry;
 use Puff\Tokenization\Grammar;
 
 /**
@@ -19,6 +20,6 @@ class InvalidKeywordException extends PuffException
      */
     public function __construct($got, $class = 'template engine', $code = 500)
     {
-        parent::__construct(sprintf("Invalid keyword passed to %s, expected %s - got %s", $class, implode(',', Grammar::KEYWORDS), $got), $code);
+        parent::__construct(sprintf("Invalid keyword passed to %s, expected %s - got %s", $class, implode(',', array_merge(Grammar::KEYWORDS, array_keys(Registry::get('custom_keywords')))), $got), $code);
     }
 }

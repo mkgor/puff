@@ -5,8 +5,8 @@ namespace Puff;
 
 
 use Puff\Compilation\Compiler;
-use Puff\Registry;
 use Puff\Exception\PuffException;
+use Puff\Tokenization\Grammar;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
 use Puff\Tokenization\Tokenizer;
@@ -104,8 +104,9 @@ class Renderer
 
     /**
      * Renderer constructor.
+     * @param array $config
      */
-    public function __construct()
+    public function __construct(array $config = [])
     {
         /**
          * Initializing default TokenRepository class, it can be replaced by calling `setTokenRepository` before rendering
@@ -113,6 +114,14 @@ class Renderer
          * @var TokenRepository tokenRepository
          */
         $this->tokenRepository = new TokenRepository();
+
+        Registry::add('custom_keywords', []);
+
+        if(isset($config['extensions']['elements'])) {
+            foreach ($config['extensions']['elements'] as $key => $item) {
+                Registry::insertAssoc('custom_keywords', $key, $item);
+            }
+        }
     }
 
     /**
