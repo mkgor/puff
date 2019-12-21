@@ -28,12 +28,37 @@ class Registry
     }
 
     /**
+     * Creating new registry item
+     *
      * @param $key
      * @param $value
      */
     public static function add($key, $value)
     {
         self::$container[$key] = $value;
+    }
+
+    /**
+     * Insert value into existing registry item
+     *
+     * @param $key
+     * @param $value
+     */
+    public static function insertInto($key,$value)
+    {
+        self::$container[$key][] = $value;
+    }
+
+    /**
+     * Insert value into existing registry item with associative key
+     *
+     * @param $key
+     * @param $assocKey
+     * @param $value
+     */
+    public static function insertAssoc($key, $assocKey, $value)
+    {
+        self::$container[$key][$assocKey] = $value;
     }
 
     /**
