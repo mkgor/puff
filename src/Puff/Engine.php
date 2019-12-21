@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Puff;
-
 
 use Puff\Compilation\Compiler;
 use Puff\Exception\PuffException;
