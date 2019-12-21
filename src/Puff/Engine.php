@@ -6,17 +6,16 @@ namespace Puff;
 
 use Puff\Compilation\Compiler;
 use Puff\Exception\PuffException;
-use Puff\Tokenization\Grammar;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
 use Puff\Tokenization\Tokenizer;
 
 /**
- * Class Renderer
+ * Class Engine
  *
  * @package Puff
  */
-class Renderer
+class Engine
 {
     /**
      * @var TokenRepository
@@ -103,7 +102,7 @@ class Renderer
     }
 
     /**
-     * Renderer constructor.
+     * Engine constructor.
      * @param array $config
      */
     public function __construct(array $config = [])
@@ -172,11 +171,13 @@ class Renderer
 
         $benchmarkResults = [
             'time' => $endingMark - $startingMark,
-            'memory-usage' => $endingMemoryUsage - $startingMemoryUsage
+            'memory_usage' => round(($endingMemoryUsage - $startingMemoryUsage)/1024, 1)
         ];
 
         if($this->isBenchmarkEnabled()) {
-            var_dump($benchmarkResults);
+            $engine = new Engine();
+
+            echo $engine->render(__DIR__ . '/Resources/templates/benchmark.puff.html', $benchmarkResults);
         }
 
         /** Returning compiled HTML code */

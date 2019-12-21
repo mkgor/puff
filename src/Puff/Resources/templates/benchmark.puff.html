@@ -1,0 +1,41 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<style>
+    html,body {
+        margin: 0;
+        padding: 0;
+    }
+    .puff_benchmark_panel {
+        position: fixed;
+        width:98%;
+        height: 50px;
+        bottom:0;
+        -webkit-box-shadow: 0px 5px 12px 0px rgba(50, 50, 85, 0.25);
+        -moz-box-shadow:    0px 5px 12px 0px rgba(50, 50, 85, 0.25);
+        box-shadow:         0px 5px 12px 0px rgba(50, 50, 85, 0.25);
+        margin:10px;
+        padding: 9px 9px 9px 12px;
+        display: flex;
+        border-radius:50px;
+    }
+
+    .puff_benchmark_item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #292d38;
+        font-family: Helvetica, sans-serif;
+        padding: 10px 25px;
+        background: rgba(0,0,0,.04);
+        border-radius:50px;
+        margin-right:10px;
+    }
+</style>
+
+<div class="puff_benchmark_panel">
+    <div class="puff_benchmark_item">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;&nbsp;<b>Time:</b>&nbsp;[[ time ]]
+    </div>
+    <div class="puff_benchmark_item">
+        <i class="fa fa-server" aria-hidden="true"></i>&nbsp;&nbsp;<b>Memory usage:</b>&nbsp;[[ memory_usage ]] Kb
+    </div>
+</div>
