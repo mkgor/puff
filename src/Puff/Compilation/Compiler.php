@@ -2,7 +2,7 @@
 
 namespace Puff\Compilation;
 
-use Puff\Compilation\Element\ElementInterface;
+use Puff\Factory\ElementClassFactory;
 use Puff\Exception\InvalidKeywordException;
 use Puff\Exception\PuffException;
 use Puff\Tokenization\Entity\Token;
@@ -30,17 +30,8 @@ class Compiler
         if(!empty($tokenRepository->getContainer())) {
             /** @var Token $token */
             foreach ($tokenRepository->getContainer() as $token) {
-                $elementClass = "\Puff\Compilation\Element\\" . ucfirst($token->getTokenName()) . "Element";
-
-                if (!class_exists($elementClass)) {
-                    throw new InvalidKeywordException($token->getTokenName(), __CLASS__);
-                }
-
-                $elementClass = new $elementClass;
-
-                if (!($elementClass instanceof ElementInterface)) {
-                    throw new PuffException('Invalid element provided to compiler');
-                }
+                $elementClassFactory = new ElementClassFactory();
+                $elementClass = $elementClassFactory->getElementClass($token->getTokenName());
 
                 /**
                  * Calling class, which is responsible for processing this token
