@@ -3,7 +3,10 @@
 
 namespace Puff\Compilation\Element;
 
-
+/**
+ * Interface ElementInterface
+ * @package Puff\Compilation\Element
+ */
 interface ElementInterface
 {
     /**

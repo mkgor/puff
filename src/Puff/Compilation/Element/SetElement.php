@@ -4,6 +4,10 @@ namespace Puff\Compilation\Element;
 
 use Puff\Compilation\Services\VariableTransliterator;
 
+/**
+ * Class SetElement
+ * @package Puff\Compilation\Element
+ */
 class SetElement extends AbstractElement
 {
 

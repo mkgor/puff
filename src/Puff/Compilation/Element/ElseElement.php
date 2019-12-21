@@ -3,7 +3,10 @@
 
 namespace Puff\Compilation\Element;
 
-
+/**
+ * Class ElseElement
+ * @package Puff\Compilation\Element
+ */
 class ElseElement extends AbstractElement
 {
 
