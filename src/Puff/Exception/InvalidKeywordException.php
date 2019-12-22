@@ -8,6 +8,7 @@ use Puff\Tokenization\Configuration;
 /**
  * Class InvalidKeywordException
  * @package Tokenization\Exceptions
+ * @codeCoverageIgnore
  */
 class InvalidKeywordException extends PuffException
 {

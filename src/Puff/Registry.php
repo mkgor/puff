@@ -3,7 +3,11 @@
 
 namespace Puff;
 
-
+/**
+ * Class Registry
+ * @package Puff
+ * @codeCoverageIgnore
+ */
 class Registry
 {
     /**

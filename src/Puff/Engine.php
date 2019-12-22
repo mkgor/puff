@@ -43,6 +43,7 @@ class Engine
 
     /**
      * @return bool
+     * @codeCoverageIgnore
      */
     public function isBenchmarkEnabled()
     {
@@ -51,6 +52,7 @@ class Engine
 
     /**
      * @param bool $benchmarkEnabled
+     * @codeCoverageIgnore
      */
     public function setBenchmarkEnabled($benchmarkEnabled)
     {
@@ -59,6 +61,7 @@ class Engine
 
     /**
      * @return string
+     * @codeCoverageIgnore
      */
     public function getRenderedTemplateString()
     {
@@ -67,6 +70,7 @@ class Engine
 
     /**
      * @param string $renderedTemplateString
+     * @codeCoverageIgnore
      */
     public function setRenderedTemplateString($renderedTemplateString)
     {
@@ -75,6 +79,7 @@ class Engine
 
     /**
      * @return string
+     * @codeCoverageIgnore
      */
     public function getTemplatesPath()
     {
@@ -83,6 +88,7 @@ class Engine
 
     /**
      * @param string $templatesPath
+     * @codeCoverageIgnore
      */
     public function setTemplatesPath($templatesPath)
     {
@@ -91,6 +97,7 @@ class Engine
 
     /**
      * @return TokenRepositoryInterface
+     * @codeCoverageIgnore
      */
     public function getTokenRepository()
     {
@@ -99,6 +106,7 @@ class Engine
 
     /**
      * @param TokenRepositoryInterface $tokenRepository
+     * @codeCoverageIgnore
      */
     public function setTokenRepository(TokenRepositoryInterface $tokenRepository)
     {
@@ -181,15 +189,14 @@ class Engine
 
             Registry::add('template_path', $this->getTemplatesPath());
 
+
             $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
 
-            /** Trying to run compiled template with `eval` */
-            try {
-                eval("?>" . $this->getRenderedTemplateString() . "<?");
-            } catch (Exception $e) {
-                throw new PuffException($e->getMessage());
-            }
+            eval("?>" . $this->getRenderedTemplateString() . "<?");
+
         } else {
+            ob_end_clean();
+
             throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
         }
 
@@ -208,6 +215,8 @@ class Engine
         }
 
         /** Returning compiled HTML code */
-        return ob_get_clean();
+        $result = ob_get_clean();
+
+        return $result;
     }
 }

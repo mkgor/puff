@@ -7,6 +7,7 @@ use Exception;
 /**
  * Class PuffException
  * @package Exceptions
+ * @codeCoverageIgnore
  */
 class PuffException extends Exception
 {

@@ -26,9 +26,10 @@ class ForElement extends AbstractElement
         if(strpos($attributes['iterate'], '~')) {
             $iterateExplode = preg_split(Configuration::FILTER_SPLIT_REGEXP, $attributes['iterate']);
 
-            $iterate = VariableTransliterator::transliterate(array_shift($iterateExplode));
+            $builderResult = $filterStringBuilder->buildString(array_slice($iterateExplode, 1), VariableTransliterator::transliterate(array_shift($iterateExplode)));
 
-            $filterString = $filterStringBuilder->buildString($iterateExplode, $iterate);
+            $filterString = $builderResult['compiled'];
+            $iterate = $builderResult['tmp_variable'];
         } else {
             $iterate = VariableTransliterator::transliterate($attributes['iterate']);
         }

@@ -14,12 +14,13 @@ class FilterStringBuilder
     /**
      * @param array $filters
      * @param $compiledVariable
-     * @return string
+     * @return array
      * @throws InvalidFilterException
      */
     public function buildString(array $filters, $compiledVariable)
     {
         $registeredFiltersList = Registry::get('registered_filters');
+        $newCompiledVariable = $compiledVariable;
 
         $filtersString = '<?php ';
 
@@ -34,14 +35,17 @@ class FilterStringBuilder
             }
 
             if(isset($registeredFiltersList[$filter])) {
-                $filtersString .= $compiledVariable . ' = ' . $registeredFiltersList[$filter] . '::handle(' . $compiledVariable . $arguments .');' . PHP_EOL;
+                $newCompiledVariable = '$tmp_'.random_int(0,10000);
+                $filtersString .= $newCompiledVariable . ' = ' . $registeredFiltersList[$filter] . '::handle(' . $compiledVariable . $arguments .');' . PHP_EOL;
             } else {
+                ob_end_clean();
+
                 throw new InvalidFilterException($filter);
             }
         }
 
         $filtersString .= ' ?>';
 
-        return $filtersString;
+        return ['tmp_variable' => $newCompiledVariable, 'compiled' => $filtersString];
     }
 }

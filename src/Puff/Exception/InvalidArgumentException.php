@@ -5,6 +5,7 @@ namespace Puff\Exception;
 /**
  * Class InvalidArgumentException
  * @package Tokenization\Exceptions
+ * @codeCoverageIgnore
  */
 class InvalidArgumentException extends PuffException
 {

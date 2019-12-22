@@ -40,6 +40,7 @@ class Token
 
     /**
      * @return string
+     * @codeCoverageIgnore
      */
     public function getTokenName()
     {
@@ -48,6 +49,7 @@ class Token
 
     /**
      * @param string $tokenName
+     * @codeCoverageIgnore
      */
     public function setTokenName($tokenName)
     {
@@ -56,6 +58,7 @@ class Token
 
     /**
      * @return array
+     * @codeCoverageIgnore
      */
     public function getAttributes()
     {
@@ -64,6 +67,7 @@ class Token
 
     /**
      * @param array $attributes
+     * @codeCoverageIgnore
      */
     public function setAttributes($attributes)
     {
@@ -72,6 +76,7 @@ class Token
 
     /**
      * @return string
+     * @codeCoverageIgnore
      */
     public function getFullToken()
     {
@@ -80,6 +85,7 @@ class Token
 
     /**
      * @param string $fullToken
+     * @codeCoverageIgnore
      */
     public function setFullToken($fullToken)
     {

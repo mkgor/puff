@@ -15,6 +15,7 @@ class TokenRepository implements TokenRepositoryInterface
 
     /**
      * @return mixed
+     * @codeCoverageIgnore
      */
     public function getContainer()
     {
@@ -23,6 +24,7 @@ class TokenRepository implements TokenRepositoryInterface
 
     /**
      * @param mixed $container
+     * @codeCoverageIgnore
      */
     public function setContainer($container)
     {
@@ -53,6 +55,7 @@ class TokenRepository implements TokenRepositoryInterface
 
     /**
      * @param Token $token
+     * @codeCoverageIgnore
      */
     public function push(Token $token)
     {
