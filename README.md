@@ -1,3 +1,8 @@
+![Coverage](https://img.shields.io/badge/coverage-54%25-orange)
+![GitHub repo size](https://img.shields.io/github/repo-size/pixaye/puff)
+![Packagist](https://img.shields.io/packagist/l/pixaye/puff)
+![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
+
 # Puff
 
 Puff is a flexible and lightweight template engine for PHP, which is inspired by Twig. 
