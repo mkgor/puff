@@ -30,10 +30,12 @@ class ShowElement extends AbstractElement
         $compiledVariable = VariableTransliterator::transliterate($attributes['data-source']);
 
         if(is_array($attributes['filters'])) {
-            $filtersString = $filtersStringBuilder->buildString($attributes['filters'], $compiledVariable);
+            $builderResult = $filtersStringBuilder->buildString($attributes['filters'], $compiledVariable);
+            $compiledVariable = $builderResult['tmp_variable'];
+            $filtersString = $builderResult['compiled'];
         }
 
         /** Building PHP snippet which will display data from variable  */
-        return sprintf(" %s <?php echo %s; ?>", $filtersString, $compiledVariable);
+        return sprintf("%s <?php echo %s; ?>", $filtersString, $compiledVariable);
     }
 }
