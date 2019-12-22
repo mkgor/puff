@@ -5,6 +5,7 @@ namespace Puff\Exception;
 /**
  * Class InvalidFilterException
  * @package Tokenization\Exceptions
+ * @codeCoverageIgnore
  */
 class InvalidFilterException extends PuffException
 {
