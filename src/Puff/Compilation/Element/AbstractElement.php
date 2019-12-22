@@ -4,7 +4,7 @@
 namespace Puff\Compilation\Element;
 
 use Puff\Exception\PuffException;
-use Puff\Tokenization\Grammar;
+use Puff\Tokenization\Configuration;
 
 /**
  * Class AbstractElement
@@ -22,7 +22,7 @@ abstract class AbstractElement implements ElementInterface
         $tokenAttributesArray = [];
 
         foreach($tokenAttributes as $tokenAttribute) {
-            list($attribute, $value) = explode(Grammar::EQUALITY_SIGNATURE, $tokenAttribute);
+            list($attribute, $value) = explode(Configuration::EQUALITY_SIGNATURE, $tokenAttribute);
 
             $tokenAttributesArray[$attribute] = trim($value, '\'"');
         }

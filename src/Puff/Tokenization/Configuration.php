@@ -8,7 +8,7 @@ namespace Puff\Tokenization;
  *
  * @package Tokenization
  */
-class Grammar
+class Configuration
 {
     const KEYWORDS = [
         'import',
@@ -24,6 +24,7 @@ class Grammar
     const EXPRESSION_SIGNATURE = ['[%','%]'];
     const PRINT_SIGNATURE = ['[[',']]'];
 
-    const HEAD_SIGNATURE = ['@head','@endhead'];
     const EQUALITY_SIGNATURE = '=';
+
+    const FILTER_SPLIT_REGEXP = '/([\'"]).*\1(*SKIP)(*F)|~/';
 }
