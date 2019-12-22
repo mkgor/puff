@@ -1,22 +1,25 @@
 {
-    "name": "pixaye/puff",
-    "description": "Flexible and lightweight template engine for PHP",
-    "type": "project",
-    "require-dev": {
-        "phpunit/phpunit": "^8.5"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Gor Mkhitaryan",
-            "email": "gor.mhitaryan@list.ru"
-        }
-    ],
-    "minimum-stability": "stable",
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "Puff\\": "src/Puff/"
-        }
+  "name": "pixaye/puff",
+  "description": "Flexible and lightweight template engine for PHP",
+  "type": "project",
+  "require-dev": {
+    "phpunit/phpunit": "^8.5"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Gor Mkhitaryan",
+      "email": "gor.mhitaryan@list.ru"
     }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^7.1",
+    "ext-mbstring": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Puff\\": "src/Puff/"
+    }
+  }
 }
