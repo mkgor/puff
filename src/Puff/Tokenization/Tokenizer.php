@@ -35,16 +35,11 @@ class Tokenizer
      *
      * @return TokenRepositoryInterface
      *
-     * @throws InvalidArgumentException
      * @throws InvalidKeywordException
      * @throws PuffException
      */
-    public function tokenize($string)
+    public function tokenize(string $string)
     {
-        if(!is_string($string)) {
-            throw new InvalidArgumentException('string', gettype($string));
-        }
-
         $expressionsRegexp = preg_quote(Configuration::EXPRESSION_SIGNATURE[0]) . "(.+?)" . preg_quote(Configuration::EXPRESSION_SIGNATURE[1]);
         $printRegexp = preg_quote(Configuration::PRINT_SIGNATURE[0]) . "(.+?)" . preg_quote(Configuration::PRINT_SIGNATURE[1]);
 
@@ -65,7 +60,7 @@ class Tokenizer
         }
 
         foreach($print as $item) {
-            if(preg_match(Configuration::FILTER_SPLIT_REGEXP, $item[1]) !== false) {
+            if(preg_match(Configuration::FILTER_SPLIT_REGEXP, $item[1])) {
                 $itemExploded = preg_split(Configuration::FILTER_SPLIT_REGEXP, $item[1]);
 
                 $source = trim($itemExploded[0]);
