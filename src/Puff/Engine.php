@@ -1,14 +1,18 @@
 <?php
 
-
 namespace Puff;
 
-
+use Exception;
+use Puff\Compilation\Filter\FilterInterface;
+use Puff\Compilation\Filter\TransliterationFilter;
+use Puff\Compilation\Filter\UpperCaseFilter;
 use Puff\Compilation\Compiler;
 use Puff\Exception\PuffException;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
 use Puff\Tokenization\Tokenizer;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class Engine
@@ -104,6 +108,8 @@ class Engine
     /**
      * Engine constructor.
      * @param array $config
+     * @throws PuffException
+     * @throws ReflectionException
      */
     public function __construct(array $config = [])
     {
@@ -115,10 +121,32 @@ class Engine
         $this->tokenRepository = new TokenRepository();
 
         Registry::add('custom_keywords', []);
+        Registry::add('registered_filters', [
+            'uppercase' => UpperCaseFilter::class,
+            'translit' => TransliterationFilter::class
+        ]);
 
+        /** Registering custom elements */
         if(isset($config['extensions']['elements'])) {
             foreach ($config['extensions']['elements'] as $key => $item) {
                 Registry::insertAssoc('custom_keywords', $key, $item);
+            }
+        }
+
+        /** Registering custom filters */
+        if(isset($config['extensions']['filters'])) {
+            foreach($config['extensions']['filters'] as $key => $item) {
+                if(class_exists($item)) {
+                    $filterClassReflection = new ReflectionClass($item);
+
+                    if (!$filterClassReflection->implementsInterface(FilterInterface::class)) {
+                        throw new PuffException(sprintf('Filter `%s` is not implementing %s', $key, FilterInterface::class));
+                    }
+
+                    Registry::insertAssoc('registered_filters', $key, $item);
+                } else {
+                    throw new PuffException(sprintf('Filter with class %s not found', $item));
+                }
             }
         }
     }
@@ -131,9 +159,8 @@ class Engine
      *
      * @return mixed|string
      *
-     * @throws Exception\InvalidArgumentException
-     * @throws Exception\InvalidKeywordException
-     * @throws Exception\PuffException
+     * @throws PuffException
+     * @throws ReflectionException
      */
     public function render($template, array $vars = [])
     {
@@ -159,7 +186,7 @@ class Engine
             /** Trying to run compiled template with `eval` */
             try {
                 eval("?>" . $this->getRenderedTemplateString() . "<?");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw new PuffException($e->getMessage());
             }
         } else {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Puff\Compilation\Services;
+namespace Puff\Compilation\Service;
 
 /**
  * Class VariableTransliterator
- * @package Puff\Compilation\Services
+ * @package Puff\Compilation\Service
  */
 class VariableTransliterator
 {

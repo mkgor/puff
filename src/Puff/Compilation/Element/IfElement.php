@@ -2,7 +2,7 @@
 
 namespace Puff\Compilation\Element;
 
-use Puff\Compilation\Services\VariableTransliterator;
+use Puff\Compilation\Service\VariableTransliterator;
 
 /**
  * Class IfElement
