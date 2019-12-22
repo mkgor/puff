@@ -4,7 +4,9 @@
 namespace Puff\Compilation\Element;
 
 
+use Puff\Compilation\Service\FilterStringBuilder;
 use Puff\Compilation\Service\VariableTransliterator;
+use Puff\Tokenization\Configuration;
 
 class ForElement extends AbstractElement
 {
@@ -14,9 +16,23 @@ class ForElement extends AbstractElement
      *
      * @param array $attributes
      * @return mixed
+     * @throws \Puff\Exception\InvalidFilterException
      */
     public function process(array $attributes)
     {
+        $filterStringBuilder = new FilterStringBuilder();
+        $filterString = null;
+
+        if(strpos($attributes['iterate'], '~')) {
+            $iterateExplode = preg_split(Configuration::FILTER_SPLIT_REGEXP, $attributes['iterate']);
+
+            $iterate = VariableTransliterator::transliterate(array_shift($iterateExplode));
+
+            $filterString = $filterStringBuilder->buildString($iterateExplode, $iterate);
+        } else {
+            $iterate = VariableTransliterator::transliterate($attributes['iterate']);
+        }
+
         if(strpos($attributes['item'], ',')) {
             list($key, $value) = explode(",",$attributes['item']);
 
@@ -28,8 +44,9 @@ class ForElement extends AbstractElement
             $itemString = VariableTransliterator::transliterate(trim($attributes['item']));
         }
 
-        return sprintf("<?php foreach(%s as %s) { ?>",
-            VariableTransliterator::transliterate($attributes['iterate']),
+        return sprintf("%s <?php foreach(%s as %s) { ?>",
+            $filterString,
+            $iterate,
             $itemString
         );
     }
@@ -40,16 +57,14 @@ class ForElement extends AbstractElement
      */
     public function handleAttributes($tokenAttributes)
     {
-        $iterateSubject = array_shift($tokenAttributes);
+        $inIndex = array_search('in', $tokenAttributes);
 
-        /** Deleting `in` from attributes */
-        array_shift($tokenAttributes);
-
-        $item = implode("",$tokenAttributes);
+        $iterateSubject = array_slice($tokenAttributes, 0, $inIndex);
+        $item = array_slice($tokenAttributes, $inIndex + 1, count($tokenAttributes));
 
         return [
-            'iterate' => $iterateSubject,
-            'item' => $item
+            'iterate' => implode($iterateSubject),
+            'item' => implode($item)
         ];
     }
 }
