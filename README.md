@@ -138,7 +138,6 @@ class NewElement extends AbstractElement
 {
     /**
      * @param array $attributes
-     
      * @return mixed
      */
     public function process(array $attributes)
