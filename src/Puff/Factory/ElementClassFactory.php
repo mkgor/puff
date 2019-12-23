@@ -25,23 +25,15 @@ class ElementClassFactory
      */
     public function getElementClass($tokenName)
     {
-        $elementClass = "\Puff\Compilation\Element\\" . $tokenName ."Element";
+        $registeredElements = Registry::get('registered_elements');
 
-        if(!class_exists($elementClass)) {
-            $customKeywords = Registry::get('custom_keywords');
-
-            if(isset($customKeywords[$tokenName])) {
-                $elementClass = $customKeywords[$tokenName];
-            } else {
-                throw new InvalidKeywordException($tokenName, get_called_class());
-            }
-        } else {
+        if (isset($registeredElements[$tokenName])) {
             /** @var ElementInterface $elementClass */
-            $elementClass = new $elementClass;
-        }
+            $elementClass = $registeredElements[$tokenName];
+        } else {
+            ob_end_clean();
 
-        if(!($elementClass instanceof ElementInterface)) {
-            throw new PuffException(sprintf('Element with name `%s` is not instance of ElementInterface', $tokenName));
+            throw new InvalidKeywordException($tokenName);
         }
 
         return $elementClass;
