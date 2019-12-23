@@ -1,6 +1,5 @@
 <?php
 
-
 use Puff\Engine;
 use Tests\Resources\TestFilter;
 
@@ -16,38 +15,19 @@ class EngineTest extends \PHPUnit\Framework\TestCase
     public function testRender()
     {
         $this->engineInstance = new Engine([
-            'extensions' => [
-                'filters' => [
-                    'test_filter' => TestFilter::class
-                ],
-
-                'elements' => [
-                    'test_element' => new Tests\Resources\TestElement()
-                ]
+            'modules' => [
+                new \Puff\Modules\Core\CoreModule(),
+                new \Tests\Resources\Modules\TestModule()
             ]
         ]);
 
-        $this->assertEquals("test filter test", $this->engineInstance->render(__DIR__ . '/Resources/test.puff.html', [
+        $result = $this->engineInstance->render(__DIR__ . '/Resources/test.puff.html', [
             'variable' => 'test'
-        ]));
-    }
-
-    /**
-     * @throws ReflectionException
-     * @throws \Puff\Exception\PuffException
-     */
-    public function testExceptionClassNotFound()
-    {
-        $this->expectException(\Puff\Exception\PuffException::class);
-
-        $engine = new Engine([
-            'extensions' => [
-                'filters' => [
-                    'test_filter' => 'Unknown\Class'
-                ]
-            ]
         ]);
+
+        $this->assertEquals("test filter test", $result);
     }
+
 
     /**
      * @throws ReflectionException
@@ -58,10 +38,8 @@ class EngineTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\Puff\Exception\PuffException::class);
 
         $engine = new Engine([
-            'extensions' => [
-                'filters' => [
-                    'test_filter' => \Tests\Resources\InvalidFilter::class
-                ]
+            'modules' => [
+                new \Tests\Resources\Modules\InvalidFilterModule()
             ]
         ]);
     }
@@ -74,7 +52,11 @@ class EngineTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\Puff\Exception\PuffException::class);
 
-        $engine = new Engine();
+        $engine = new Engine([
+            'modules' => [
+                new \Puff\Modules\Core\CoreModule()
+            ]
+        ]);
 
         echo $engine->render('invalid.puff.html');
     }
@@ -85,24 +67,88 @@ class EngineTest extends \PHPUnit\Framework\TestCase
      */
     public function testBenchmarkBar()
     {
-        $this->engineInstance = new Engine([
-            'extensions' => [
-                'filters' => [
-                    'test_filter' => TestFilter::class
-                ],
-
-                'elements' => [
-                    'test_element' => new Tests\Resources\TestElement()
-                ]
+        $engine = new Engine([
+            'modules' => [
+                new \Puff\Modules\Core\CoreModule(),
+                new \Tests\Resources\Modules\TestModule()
             ]
         ]);
 
-        $this->engineInstance->setBenchmarkEnabled(true);
+        $engine->setBenchmarkEnabled(true);
 
-        $this->assertNotEquals("test filter filter", $this->engineInstance->render(__DIR__ . '/Resources/test.puff.html', [
+        $this->assertNotEquals("test filter filter", $engine->render(__DIR__ . '/Resources/test.puff.html', [
             'variable' => 'test'
         ]));
 
-        $this->assertTrue($this->engineInstance->isBenchmarkEnabled());
+        $this->assertTrue($engine->isBenchmarkEnabled());
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Puff\Exception\PuffException
+     */
+    public function testInitializingWithoutModules()
+    {
+        $this->expectException(\Puff\Exception\PuffException::class);
+
+        $engine = new Engine([
+            'modules' => []
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Puff\Exception\PuffException
+     */
+    public function testInitializingInvalidModule()
+    {
+        $this->expectException(\Puff\Exception\ModuleException::class);
+
+        $engine = new Engine([
+            'modules' => [
+                new \Tests\Resources\Modules\InvalidModule()
+            ]
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Puff\Exception\PuffException
+     */
+    public function testInvalidElement()
+    {
+        $this->expectException(\Puff\Exception\ModuleException::class);
+
+        $engine = new Engine([
+            'modules' => [
+                new \Tests\Resources\Modules\InvalidElementModule()
+            ]
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Puff\Exception\PuffException
+     */
+    public function testNotArrayProvided()
+    {
+        $this->expectException(\Puff\Exception\PuffException::class);
+
+        $engine = new Engine([
+            'modules' => 123
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Puff\Exception\PuffException
+     */
+    public function testNotObjectProvided()
+    {
+        $this->expectException(\Puff\Exception\PuffException::class);
+
+        $engine = new Engine([
+            'modules' => [123]
+        ]);
     }
 }
