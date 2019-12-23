@@ -4,6 +4,7 @@ namespace Puff\Modules\Core\Element;
 
 use Puff\Compilation\Compiler;
 use Puff\Compilation\Element\AbstractElement;
+use Puff\Engine;
 use Puff\Exception\InvalidKeywordException;
 use Puff\Registry;
 use Puff\Exception\InvalidArgumentException;
@@ -33,13 +34,15 @@ class ImportElement extends AbstractElement
         $tokenizer = new Tokenizer(new TokenRepository());
         $compiler = new Compiler();
 
-        $templatesDirectory = Registry::get('template_path');
+        $templatesDirectory = Registry::get('templates_path');
 
-        if(empty($templatesDirectory)) {
-            $templatesDirectory = filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
+        if(empty($templatesDirectory) && empty($_SERVER['DOCUMENT_ROOT'])) {
+            $templatesDirectory = Engine::BASE_PATH . '/../..';
+        } else if(empty($templatesDirectory)) {
+            $templatesDirectory = $_SERVER['DOCUMENT_ROOT'];
         }
 
-        $templatePath = $templatesDirectory . '/' . $attributes['src'];
+        $templatePath = $templatesDirectory . DIRECTORY_SEPARATOR . $attributes['src'];
 
         if(file_exists($templatePath)) {
             $importedTemplate = file_get_contents($templatePath);
