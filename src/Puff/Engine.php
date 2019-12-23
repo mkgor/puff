@@ -5,8 +5,6 @@ namespace Puff;
 use Exception;
 use Puff\Compilation\Element\AbstractElement;
 use Puff\Compilation\Filter\FilterInterface;
-use Puff\Compilation\Filter\TransliterationFilter;
-use Puff\Compilation\Filter\UpperCaseFilter;
 use Puff\Compilation\Compiler;
 use Puff\Exception\ModuleException;
 use Puff\Exception\PuffException;
@@ -24,6 +22,8 @@ use ReflectionException;
  */
 class Engine
 {
+    const BASE_PATH = __DIR__;
+
     /**
      * @var TokenRepository
      */
@@ -118,6 +118,8 @@ class Engine
      */
     public function setTemplatesPath($templatesPath)
     {
+        Registry::add('templates_path', $templatesPath);
+
         $this->templatesPath = $templatesPath;
     }
 
