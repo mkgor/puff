@@ -211,6 +211,27 @@ class Engine
     }
 
     /**
+     * Recursively replaces - and . in array keys by _
+     * @param array $input
+     * @return array
+     */
+    public function replaceKeys(array $input)
+    {
+        $return = [];
+
+        foreach ($input as $key => $value) {
+            $key = preg_replace('/[.-]/', '_', $key);
+
+            if (is_array($value)) {
+                $value = $this->replaceKeys($value);
+            }
+
+            $return[$key] = $value;
+        }
+        return $return;
+    }
+
+    /**
      * Renders template or takes it from cache
      *
      * @param $template
@@ -228,6 +249,29 @@ class Engine
 
         $tokenizer = new Tokenizer($this->getTokenRepository());
         $compiler = new Compiler();
+
+        $headersArray = [];
+        $headersList = headers_list();
+
+        foreach ($headersList as $item) {
+            list($header, $content) = explode(':', $item);
+
+            $headersArray[$header] = $content;
+        }
+
+        $vars['server_request'] = [
+            'globals' => [
+                'get' => $_GET,
+                'post' => $_POST,
+                'request' => $_REQUEST,
+                'server' => $_SERVER,
+                'cookie' => $_COOKIE,
+                'session' => $_SESSION ?? null,
+            ],
+            'headers' => $headersArray
+        ];
+
+        $vars = $this->replaceKeys($vars);
 
         /** Injecting variables into the template */
         extract($vars);
