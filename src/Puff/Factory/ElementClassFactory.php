@@ -31,11 +31,9 @@ class ElementClassFactory
             /** @var ElementInterface $elementClass */
             $elementClass = $registeredElements[$tokenName];
         } else {
-            throw new InvalidKeywordException($tokenName);
-        }
+            ob_end_clean();
 
-        if (!($elementClass instanceof ElementInterface)) {
-            throw new PuffException(sprintf('Element with name `%s` is not instance of ElementInterface', $tokenName));
+            throw new InvalidKeywordException($tokenName);
         }
 
         return $elementClass;
