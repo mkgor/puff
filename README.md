@@ -20,6 +20,34 @@ Install Puff via composer
 composer require pixaye/puff
 ````
 
+## Quickstart
+
+````php
+<?php
+
+require_once "vendor/autoload.php";
+
+$engine = new \Puff\Engine([
+    'modules' => [
+        new \Puff\Modules\Core\CoreModule()
+    ]
+]);
+
+echo $engine->render(__DIR__ . '/template.puff.html', [
+    'variable' => 'Puff'
+]);
+````
+
+````html 
+<html>
+<body>
+Hello, i am [[ variable ]]
+</body>
+</html>
+````
+
+**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.
+
 ## Specification
 
 Instructions for executing basic statements, such as **if-else**, **for**, **import**, etc. indicated by combination of characters ````[% %]````
@@ -109,22 +137,48 @@ You also can use filters in **for** statement
 You can create your own filters. Read how to do it in **Extensions system** block
 
 ## Extensions system
-Puff is extensible, so you can create your own statements and filters. 
+Puff is extensible, so you can create your own modules, which can contain your own statements and filters. 
+
+To create module, just create class which implements **Puff\Modules\ModuleInterface** and insert in into **modules** array of **Engine** configuration
+
+````php
+$engine = new \Puff\Engine([
+    'modules' => [
+        new \Puff\Modules\Core\CoreModule()
+        new \Puff\Modules\NewModule\MyModule()
+    ]
+]);
+````
+
+**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.
 
 ### Making new statement (element)
 
 To make new element, you should create class, which should extend **Puff\Compilation\Element\AbstractElement**
 
-You should specify element's class in **Engine** class constructor:
+You should specify element's class in your **Module** class's setUp() method:
 
 ````php
-$engine = new Engine([
-            'extensions' => [
-                'elements' => [
-                    'test_element' => new NewElement()
-                ]
+...
+/**
+     * Returns an array of elements and filters which will be initialized
+     *
+     * @return array
+     */
+    public function setUp(): array
+    {
+        return [
+            'elements' => [
+                'new_element' => new NewElement(),
+                'another_new_element' => new AnotherNewElement()
+            ],
+
+            'filters' => [
+                'new_filter' => NewFilter::class
             ]
-        ]);
+        ];
+    }
+    ...
 ````
 
 Now, your element is accessible in template by **test_element** keyword
