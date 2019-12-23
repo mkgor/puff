@@ -3,10 +3,12 @@
 namespace Puff;
 
 use Exception;
+use Puff\Compilation\Element\AbstractElement;
 use Puff\Compilation\Filter\FilterInterface;
 use Puff\Compilation\Filter\TransliterationFilter;
 use Puff\Compilation\Filter\UpperCaseFilter;
 use Puff\Compilation\Compiler;
+use Puff\Exception\ModuleException;
 use Puff\Exception\PuffException;
 use Puff\Modules\ModuleInterface;
 use Puff\Tokenization\Repository\TokenRepository;
@@ -49,6 +51,7 @@ class Engine
 
     /**
      * @return array
+     * @codeCoverageIgnore
      */
     public function getInitializedModules(): array
     {
@@ -57,6 +60,7 @@ class Engine
 
     /**
      * @param array $initializedModules
+     * @codeCoverageIgnore
      */
     public function setInitializedModules(array $initializedModules): void
     {
@@ -154,28 +158,43 @@ class Engine
         $registeredKeywords = [];
         $registeredFilters = [];
 
-        if(!isset($configuration['modules']) || empty($configuration['modules'])) {
+        if (!isset($configuration['modules']) || empty($configuration['modules']) || !is_array($configuration['modules'])) {
             throw new PuffException('There are no modules initialized.');
         }
 
         /** @var ModuleInterface $module */
-        foreach($configuration['modules'] as $module) {
-            if(is_object($module)) {
+        foreach ($configuration['modules'] as $module) {
+            if (is_object($module)) {
                 $moduleReflection = new ReflectionClass($module);
 
                 $this->initializedModules[] = $moduleReflection->getShortName();
 
                 if (!($module instanceof ModuleInterface)) {
-                    throw new PuffException(sprintf('%s is not valid module', get_class($module)));
+                    throw new ModuleException(sprintf('%s is not valid module', get_class($module)));
                 }
 
                 $moduleData = $module->setUp();
 
-                if(isset($moduleData['elements'])) {
-                    $registeredKeywords = array_merge($registeredKeywords, $moduleData['elements']);
+                if (isset($moduleData['elements'])) {
+                    foreach ($moduleData['elements'] as $key => $elementInstance) {
+                        if (is_object($elementInstance) && $elementInstance instanceof AbstractElement) {
+                            $registeredKeywords[$key] = $elementInstance;
+                        } else {
+                            throw new ModuleException(sprintf("Element %s in module %s is invalid", $key, $moduleReflection->getShortName()));
+                        }
+                    }
                 }
 
-                if(isset($moduleData['filters'])) {
+                if (isset($moduleData['filters'])) {
+                    foreach ($moduleData['filters'] as $key => $filterClassname) {
+                        $filterReflection = new ReflectionClass($filterClassname);
+
+                        if ($filterReflection->implementsInterface(FilterInterface::class)) {
+                            $registeredFilters[$key] = $filterClassname;
+                        } else {
+                            throw new ModuleException(sprintf("Filter %s in module %s is invalid", $key, $moduleReflection->getShortName()));
+                        }
+                    }
                     $registeredFilters = array_merge($registeredFilters, $moduleData['filters']);
                 }
             } else {
@@ -221,7 +240,7 @@ class Engine
 
             $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
 
-            eval("?>" . $this->getRenderedTemplateString() . "<?");
+            eval("?>" . $this->getRenderedTemplateString());
 
         } else {
             ob_end_clean();
@@ -234,11 +253,15 @@ class Engine
 
         $benchmarkResults = [
             'time' => $endingMark - $startingMark,
-            'memory_usage' => round(($endingMemoryUsage - $startingMemoryUsage)/1024, 1)
+            'memory_usage' => round(($endingMemoryUsage - $startingMemoryUsage) / 1024, 1)
         ];
 
-        if($this->isBenchmarkEnabled()) {
-            $engine = new Engine();
+        if ($this->isBenchmarkEnabled()) {
+            $engine = new Engine([
+                'modules' => [
+                    new \Puff\Modules\Core\CoreModule(),
+                ]
+            ]);
 
             echo $engine->render(__DIR__ . '/Resources/templates/benchmark.puff.html', $benchmarkResults);
         }
