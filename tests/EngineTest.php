@@ -151,4 +151,25 @@ class EngineTest extends \PHPUnit\Framework\TestCase
             'modules' => [123]
         ]);
     }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Puff\Exception\PuffException
+     */
+    public function testArrayVariable()
+    {
+        $this->engineInstance = new Engine([
+            'modules' => [
+                new \Puff\Modules\Core\CoreModule(),
+            ]
+        ]);
+
+        $result = $this->engineInstance->render(__DIR__ . '/Resources/array_test.puff.html', [
+            'variable' => [
+                'item' => 'test'
+            ]
+        ]);
+
+        $this->assertEquals("test", $result);
+    }
 }
