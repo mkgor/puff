@@ -1,4 +1,4 @@
-![Coverage](https://img.shields.io/badge/coverage-54%25-orange)
+![Coverage](https://img.shields.io/badge/coverage-74%25-yellow)
 ![GitHub repo size](https://img.shields.io/github/repo-size/pixaye/puff)
 ![Packagist](https://img.shields.io/packagist/l/pixaye/puff)
 ![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
