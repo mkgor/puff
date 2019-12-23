@@ -1,4 +1,4 @@
-![Coverage](https://img.shields.io/badge/coverage-54%25-orange)
+![Coverage](https://img.shields.io/badge/coverage-74%25-yellow)
 ![GitHub repo size](https://img.shields.io/github/repo-size/pixaye/puff)
 ![Packagist](https://img.shields.io/packagist/l/pixaye/puff)
 ![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
@@ -19,6 +19,34 @@ Install Puff via composer
 ````bash
 composer require pixaye/puff
 ````
+
+## Quickstart
+
+````php
+<?php
+
+require_once "vendor/autoload.php";
+
+$engine = new \Puff\Engine([
+    'modules' => [
+        new \Puff\Modules\Core\CoreModule()
+    ]
+]);
+
+echo $engine->render(__DIR__ . '/template.puff.html', [
+    'variable' => 'Puff'
+]);
+````
+
+````html 
+<html>
+<body>
+Hello, i am [[ variable ]]
+</body>
+</html>
+````
+
+**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.
 
 ## Specification
 
@@ -109,22 +137,45 @@ You also can use filters in **for** statement
 You can create your own filters. Read how to do it in **Extensions system** block
 
 ## Extensions system
-Puff is extensible, so you can create your own statements and filters. 
+Puff is extensible, so you can create your own modules, which can contain your own statements and filters. 
+
+To create module, just create class which implements **Puff\Modules\ModuleInterface** and insert in into **modules** array of **Engine** configuration
+
+````php
+$engine = new \Puff\Engine([
+    'modules' => [
+        new \Puff\Modules\Core\CoreModule()
+        new \Puff\Modules\NewModule\MyModule()
+    ]
+]);
+````
+
+**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.
 
 ### Making new statement (element)
 
 To make new element, you should create class, which should extend **Puff\Compilation\Element\AbstractElement**
 
-You should specify element's class in **Engine** class constructor:
+You should specify element's class in your **Module** class's setUp() method:
 
 ````php
-$engine = new Engine([
-            'extensions' => [
-                'elements' => [
-                    'test_element' => new NewElement()
-                ]
-            ]
-        ]);
+...
+/**
+     * Returns an array of elements and filters which will be initialized
+     *
+     * @return array
+     */
+    public function setUp(): array
+    {
+        return [
+            'elements' => [
+                'new_element' => new NewElement(),
+                'another_new_element' => new AnotherNewElement()
+            ],
+            ...
+        ];
+    }
+    ...
 ````
 
 Now, your element is accessible in template by **test_element** keyword
@@ -232,16 +283,24 @@ Will display: attribute not found
 
 To make new element, you should create class, which should extend **Puff\Compilation\Element\AbstractElement**
 
-You should specify element's **class name** in **Engine** class constructor:
+You should specify element's **class name** in **Module's** class setUp() method:
 
 ````php
-$engine = new Engine([
-            'extensions' => [
-                'filters' => [
-                    'test_filter' => NewFilter::class
-                ]
+/**
+     * Returns an array of elements and filters which will be initialized
+     *
+     * @return array
+     */
+    public function setUp(): array
+    {
+        return [
+            ...
+            'filters' => [
+                'new_filter' => NewFilter::class
             ]
-        ]);
+        ];
+    }
+    ...
 ````
 
 Your filter class should implement **Puff\Compilation\Filter\FilterInterface**
