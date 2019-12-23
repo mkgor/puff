@@ -37,6 +37,6 @@ class ShowElement extends AbstractElement
         }
 
         /** Building PHP snippet which will display data from variable  */
-        return sprintf("%s <?php echo %s; ?>", $filtersString, $compiledVariable);
+        return sprintf("%s<?php echo %s; ?>", $filtersString, $compiledVariable);
     }
 }
