@@ -1,7 +1,9 @@
 <?php
 
 
-namespace Puff\Compilation\Element;
+namespace Puff\Modules\Core\Element;
+
+use Puff\Compilation\Element\AbstractElement;
 
 /**
  * Class EndElement

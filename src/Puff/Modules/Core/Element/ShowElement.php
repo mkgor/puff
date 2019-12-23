@@ -1,7 +1,8 @@
 <?php
 
-namespace Puff\Compilation\Element;
+namespace Puff\Modules\Core\Element;
 
+use Puff\Compilation\Element\AbstractElement;
 use Puff\Compilation\Service\FilterStringBuilder;
 use Puff\Compilation\Service\VariableTransliterator;
 use Puff\Exception\PuffException;
@@ -36,6 +37,6 @@ class ShowElement extends AbstractElement
         }
 
         /** Building PHP snippet which will display data from variable  */
-        return sprintf("%s <?php echo %s; ?>", $filtersString, $compiledVariable);
+        return sprintf("%s<?php echo %s; ?>", $filtersString, $compiledVariable);
     }
 }

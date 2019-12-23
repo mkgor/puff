@@ -21,6 +21,6 @@ class InvalidKeywordException extends PuffException
      */
     public function __construct($got, $class = 'template engine', $code = 500)
     {
-        parent::__construct(sprintf("Invalid keyword passed to %s, expected %s - got %s", $class, implode(',', array_merge(Configuration::KEYWORDS, array_keys(Registry::get('custom_keywords')))), $got), $code);
+        parent::__construct(sprintf("Invalid keyword passed to %s, expected %s - got %s", $class, implode(',', array_keys(Registry::get('registered_elements'))), $got), $code);
     }
 }

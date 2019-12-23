@@ -3,11 +3,12 @@
 namespace Puff;
 
 use Exception;
+use Puff\Compilation\Element\AbstractElement;
 use Puff\Compilation\Filter\FilterInterface;
-use Puff\Compilation\Filter\TransliterationFilter;
-use Puff\Compilation\Filter\UpperCaseFilter;
 use Puff\Compilation\Compiler;
+use Puff\Exception\ModuleException;
 use Puff\Exception\PuffException;
+use Puff\Modules\ModuleInterface;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
 use Puff\Tokenization\Tokenizer;
@@ -21,6 +22,8 @@ use ReflectionException;
  */
 class Engine
 {
+    const BASE_PATH = __DIR__;
+
     /**
      * @var TokenRepository
      */
@@ -40,6 +43,29 @@ class Engine
      * @var bool
      */
     private $benchmarkEnabled = false;
+
+    /**
+     * @var array
+     */
+    private $initializedModules = [];
+
+    /**
+     * @return array
+     * @codeCoverageIgnore
+     */
+    public function getInitializedModules(): array
+    {
+        return $this->initializedModules;
+    }
+
+    /**
+     * @param array $initializedModules
+     * @codeCoverageIgnore
+     */
+    public function setInitializedModules(array $initializedModules): void
+    {
+        $this->initializedModules = $initializedModules;
+    }
 
     /**
      * @return bool
@@ -92,6 +118,8 @@ class Engine
      */
     public function setTemplatesPath($templatesPath)
     {
+        Registry::add('templates_path', $templatesPath);
+
         $this->templatesPath = $templatesPath;
     }
 
@@ -115,11 +143,12 @@ class Engine
 
     /**
      * Engine constructor.
-     * @param array $config
+     * @param array $configuration
+     *
      * @throws PuffException
      * @throws ReflectionException
      */
-    public function __construct(array $config = [])
+    public function __construct(array $configuration = [])
     {
         /**
          * Initializing default TokenRepository class, it can be replaced by calling `setTokenRepository` before rendering
@@ -128,35 +157,57 @@ class Engine
          */
         $this->tokenRepository = new TokenRepository();
 
-        Registry::add('custom_keywords', []);
-        Registry::add('registered_filters', [
-            'uppercase' => UpperCaseFilter::class,
-            'translit' => TransliterationFilter::class
-        ]);
+        $registeredKeywords = [];
+        $registeredFilters = [];
 
-        /** Registering custom elements */
-        if(isset($config['extensions']['elements'])) {
-            foreach ($config['extensions']['elements'] as $key => $item) {
-                Registry::insertAssoc('custom_keywords', $key, $item);
-            }
+        if (!isset($configuration['modules']) || empty($configuration['modules']) || !is_array($configuration['modules'])) {
+            throw new PuffException('There are no modules initialized.');
         }
 
-        /** Registering custom filters */
-        if(isset($config['extensions']['filters'])) {
-            foreach($config['extensions']['filters'] as $key => $item) {
-                if(class_exists($item)) {
-                    $filterClassReflection = new ReflectionClass($item);
+        /** @var ModuleInterface $module */
+        foreach ($configuration['modules'] as $module) {
+            if (is_object($module)) {
+                $moduleReflection = new ReflectionClass($module);
 
-                    if (!$filterClassReflection->implementsInterface(FilterInterface::class)) {
-                        throw new PuffException(sprintf('Filter `%s` is not implementing %s', $key, FilterInterface::class));
-                    }
+                $this->initializedModules[] = $moduleReflection->getShortName();
 
-                    Registry::insertAssoc('registered_filters', $key, $item);
-                } else {
-                    throw new PuffException(sprintf('Filter with class %s not found', $item));
+                if (!($module instanceof ModuleInterface)) {
+                    throw new ModuleException(sprintf('%s is not valid module', get_class($module)));
                 }
+
+                $moduleData = $module->setUp();
+
+                if (isset($moduleData['elements'])) {
+                    foreach ($moduleData['elements'] as $key => $elementInstance) {
+                        if (is_object($elementInstance) && $elementInstance instanceof AbstractElement) {
+                            $registeredKeywords[$key] = $elementInstance;
+                        } else {
+                            throw new ModuleException(sprintf("Element %s in module %s is invalid", $key, $moduleReflection->getShortName()));
+                        }
+                    }
+                }
+
+                if (isset($moduleData['filters'])) {
+                    foreach ($moduleData['filters'] as $key => $filterClassname) {
+                        $filterReflection = new ReflectionClass($filterClassname);
+
+                        if ($filterReflection->implementsInterface(FilterInterface::class)) {
+                            $registeredFilters[$key] = $filterClassname;
+                        } else {
+                            throw new ModuleException(sprintf("Filter %s in module %s is invalid", $key, $moduleReflection->getShortName()));
+                        }
+                    }
+                    $registeredFilters = array_merge($registeredFilters, $moduleData['filters']);
+                }
+            } else {
+                throw new PuffException('Invalid value provided to engine constructor');
             }
         }
+
+        Registry::add('initialized_modules', $this->initializedModules);
+
+        Registry::add('registered_elements', $registeredKeywords);
+        Registry::add('registered_filters', $registeredFilters);
     }
 
     /**
@@ -189,10 +240,9 @@ class Engine
 
             Registry::add('template_path', $this->getTemplatesPath());
 
-
             $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
 
-            eval("?>" . $this->getRenderedTemplateString() . "<?");
+            eval("?>" . $this->getRenderedTemplateString());
 
         } else {
             ob_end_clean();
@@ -205,11 +255,15 @@ class Engine
 
         $benchmarkResults = [
             'time' => $endingMark - $startingMark,
-            'memory_usage' => round(($endingMemoryUsage - $startingMemoryUsage)/1024, 1)
+            'memory_usage' => round(($endingMemoryUsage - $startingMemoryUsage) / 1024, 1)
         ];
 
-        if($this->isBenchmarkEnabled()) {
-            $engine = new Engine();
+        if ($this->isBenchmarkEnabled()) {
+            $engine = new Engine([
+                'modules' => [
+                    new \Puff\Modules\Core\CoreModule(),
+                ]
+            ]);
 
             echo $engine->render(__DIR__ . '/Resources/templates/benchmark.puff.html', $benchmarkResults);
         }

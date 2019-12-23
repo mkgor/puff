@@ -35,6 +35,8 @@ abstract class AbstractElement implements ElementInterface
      *
      * @return mixed|void
      * @throws PuffException
+     *
+     * @codeCoverageIgnore
      */
     public function process(array $attributes)
     {
