@@ -1,7 +1,8 @@
 <?php
 
-namespace Puff\Compilation\Element;
+namespace Puff\Modules\Core\Element;
 
+use Puff\Compilation\Element\AbstractElement;
 use Puff\Compilation\Service\FilterStringBuilder;
 use Puff\Compilation\Service\VariableTransliterator;
 use Puff\Exception\PuffException;

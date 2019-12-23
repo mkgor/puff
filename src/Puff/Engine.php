@@ -8,6 +8,7 @@ use Puff\Compilation\Filter\TransliterationFilter;
 use Puff\Compilation\Filter\UpperCaseFilter;
 use Puff\Compilation\Compiler;
 use Puff\Exception\PuffException;
+use Puff\Modules\ModuleInterface;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
 use Puff\Tokenization\Tokenizer;
@@ -40,6 +41,27 @@ class Engine
      * @var bool
      */
     private $benchmarkEnabled = false;
+
+    /**
+     * @var array
+     */
+    private $initializedModules = [];
+
+    /**
+     * @return array
+     */
+    public function getInitializedModules(): array
+    {
+        return $this->initializedModules;
+    }
+
+    /**
+     * @param array $initializedModules
+     */
+    public function setInitializedModules(array $initializedModules): void
+    {
+        $this->initializedModules = $initializedModules;
+    }
 
     /**
      * @return bool
@@ -115,11 +137,12 @@ class Engine
 
     /**
      * Engine constructor.
-     * @param array $config
+     * @param array $configuration
+     *
      * @throws PuffException
      * @throws ReflectionException
      */
-    public function __construct(array $config = [])
+    public function __construct(array $configuration = [])
     {
         /**
          * Initializing default TokenRepository class, it can be replaced by calling `setTokenRepository` before rendering
@@ -128,35 +151,42 @@ class Engine
          */
         $this->tokenRepository = new TokenRepository();
 
-        Registry::add('custom_keywords', []);
-        Registry::add('registered_filters', [
-            'uppercase' => UpperCaseFilter::class,
-            'translit' => TransliterationFilter::class
-        ]);
+        $registeredKeywords = [];
+        $registeredFilters = [];
 
-        /** Registering custom elements */
-        if(isset($config['extensions']['elements'])) {
-            foreach ($config['extensions']['elements'] as $key => $item) {
-                Registry::insertAssoc('custom_keywords', $key, $item);
-            }
+        if(!isset($configuration['modules']) || empty($configuration['modules'])) {
+            throw new PuffException('There are no modules initialized.');
         }
 
-        /** Registering custom filters */
-        if(isset($config['extensions']['filters'])) {
-            foreach($config['extensions']['filters'] as $key => $item) {
-                if(class_exists($item)) {
-                    $filterClassReflection = new ReflectionClass($item);
+        /** @var ModuleInterface $module */
+        foreach($configuration['modules'] as $module) {
+            if(is_object($module)) {
+                $moduleReflection = new ReflectionClass($module);
 
-                    if (!$filterClassReflection->implementsInterface(FilterInterface::class)) {
-                        throw new PuffException(sprintf('Filter `%s` is not implementing %s', $key, FilterInterface::class));
-                    }
+                $this->initializedModules[] = $moduleReflection->getShortName();
 
-                    Registry::insertAssoc('registered_filters', $key, $item);
-                } else {
-                    throw new PuffException(sprintf('Filter with class %s not found', $item));
+                if (!($module instanceof ModuleInterface)) {
+                    throw new PuffException(sprintf('%s is not valid module', get_class($module)));
                 }
+
+                $moduleData = $module->setUp();
+
+                if(isset($moduleData['elements'])) {
+                    $registeredKeywords = array_merge($registeredKeywords, $moduleData['elements']);
+                }
+
+                if(isset($moduleData['filters'])) {
+                    $registeredFilters = array_merge($registeredFilters, $moduleData['filters']);
+                }
+            } else {
+                throw new PuffException('Invalid value provided to engine constructor');
             }
         }
+
+        Registry::add('initialized_modules', $this->initializedModules);
+
+        Registry::add('registered_elements', $registeredKeywords);
+        Registry::add('registered_filters', $registeredFilters);
     }
 
     /**
@@ -188,7 +218,6 @@ class Engine
             $templateString = file_get_contents($this->getTemplatesPath() . $template);
 
             Registry::add('template_path', $this->getTemplatesPath());
-
 
             $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
 

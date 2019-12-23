@@ -1,8 +1,9 @@
 <?php
 
-namespace Puff\Compilation\Element;
+namespace Puff\Modules\Core\Element;
 
 use Puff\Compilation\Compiler;
+use Puff\Compilation\Element\AbstractElement;
 use Puff\Exception\InvalidKeywordException;
 use Puff\Registry;
 use Puff\Exception\InvalidArgumentException;
