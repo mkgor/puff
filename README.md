@@ -172,10 +172,7 @@ You should specify element's class in your **Module** class's setUp() method:
                 'new_element' => new NewElement(),
                 'another_new_element' => new AnotherNewElement()
             ],
-
-            'filters' => [
-                'new_filter' => NewFilter::class
-            ]
+            ...
         ];
     }
     ...
@@ -286,16 +283,24 @@ Will display: attribute not found
 
 To make new element, you should create class, which should extend **Puff\Compilation\Element\AbstractElement**
 
-You should specify element's **class name** in **Engine** class constructor:
+You should specify element's **class name** in **Module's** class setUp() method:
 
 ````php
-$engine = new Engine([
-            'extensions' => [
-                'filters' => [
-                    'test_filter' => NewFilter::class
-                ]
+/**
+     * Returns an array of elements and filters which will be initialized
+     *
+     * @return array
+     */
+    public function setUp(): array
+    {
+        return [
+            ...
+            'filters' => [
+                'new_filter' => NewFilter::class
             ]
-        ]);
+        ];
+    }
+    ...
 ````
 
 Your filter class should implement **Puff\Compilation\Filter\FilterInterface**
