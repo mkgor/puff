@@ -1,6 +1,6 @@
 <?php
 
-namespace Puff\Compilation\Filter;
+namespace Puff\Modules\Core\Filter;
 
 use Puff\Compilation\Filter\FilterInterface;
 
