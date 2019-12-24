@@ -46,7 +46,7 @@ class ForElement extends AbstractElement
             $itemString = VariableTransliterator::transliterate(trim($attributes['item']));
         }
 
-        return sprintf("%s <?php foreach(%s as %s) { ?>",
+        return sprintf("%s<?php foreach(%s as %s) { ?>",
             $filterString,
             $iterate,
             $itemString

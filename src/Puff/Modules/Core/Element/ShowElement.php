@@ -23,10 +23,6 @@ class ShowElement extends AbstractElement
     {
         $filtersStringBuilder = new FilterStringBuilder();
 
-        if (!isset($attributes['data-source'])) {
-            throw new PuffException('Expected data-source to print value');
-        }
-
         $filtersString = null;
         $compiledVariable = VariableTransliterator::transliterate($attributes['data-source']);
 
@@ -37,6 +33,6 @@ class ShowElement extends AbstractElement
         }
 
         /** Building PHP snippet which will display data from variable  */
-        return sprintf("%s<?php echo %s; ?>", $filtersString, $compiledVariable);
+        return sprintf("%s<?php echo %s; ?>", $filtersString, (empty($compiledVariable)) ? "''" : $compiledVariable);
     }
 }

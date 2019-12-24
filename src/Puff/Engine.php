@@ -50,6 +50,27 @@ class Engine
     private $initializedModules = [];
 
     /**
+     * @var bool
+     */
+    private $directInputMode = false;
+
+    /**
+     * @return bool
+     */
+    public function isDirectInputMode(): bool
+    {
+        return $this->directInputMode;
+    }
+
+    /**
+     * @param bool $directInputMode
+     */
+    public function setDirectInputMode(bool $directInputMode): void
+    {
+        $this->directInputMode = $directInputMode;
+    }
+
+    /**
      * @return array
      * @codeCoverageIgnore
      */
@@ -279,20 +300,23 @@ class Engine
         /** Starting output buffering */
         ob_start();
 
-        if (file_exists($this->getTemplatesPath() . $template)) {
-            $templateString = file_get_contents($this->getTemplatesPath() . $template);
+        if(!$this->isDirectInputMode()) {
+            if (file_exists($this->getTemplatesPath() . $template)) {
+                $templateString = file_get_contents($this->getTemplatesPath() . $template);
+            } else {
+                ob_end_clean();
 
-            Registry::add('template_path', $this->getTemplatesPath());
-
-            $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
-
-            eval("?>" . $this->getRenderedTemplateString());
-
+                throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
+            }
         } else {
-            ob_end_clean();
-
-            throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
+            $templateString = $template;
         }
+
+        Registry::add('template_path', $this->getTemplatesPath());
+
+        $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
+
+        eval("?>" . $this->getRenderedTemplateString());
 
         $endingMark = microtime(true);
         $endingMemoryUsage = memory_get_usage();

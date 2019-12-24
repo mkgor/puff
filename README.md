@@ -46,7 +46,8 @@ Hello, i am [[ variable ]]
 </html>
 ````
 
-**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.
+**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.  
+**Also important!** Puff automatically converts '-' and '.' symbols into '_' in variable's name.
 
 ## Specification
 
