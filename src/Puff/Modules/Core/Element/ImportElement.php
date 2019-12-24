@@ -28,6 +28,8 @@ class ImportElement extends AbstractElement
     public function process(array $attributes)
     {
         if(!isset($attributes['src'])) {
+            ob_end_clean();
+
             throw new InvalidArgumentException('src', 'nothing', __CLASS__);
         }
 
@@ -47,6 +49,8 @@ class ImportElement extends AbstractElement
         if(file_exists($templatePath)) {
             $importedTemplate = file_get_contents($templatePath);
         } else {
+            ob_end_clean();
+
             throw new PuffException("Template import error. Could not find template on `".$templatePath."`");
         }
 

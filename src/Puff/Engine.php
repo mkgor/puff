@@ -50,6 +50,27 @@ class Engine
     private $initializedModules = [];
 
     /**
+     * @var bool
+     */
+    private $directInputMode = false;
+
+    /**
+     * @return bool
+     */
+    public function isDirectInputMode(): bool
+    {
+        return $this->directInputMode;
+    }
+
+    /**
+     * @param bool $directInputMode
+     */
+    public function setDirectInputMode(bool $directInputMode): void
+    {
+        $this->directInputMode = $directInputMode;
+    }
+
+    /**
      * @return array
      * @codeCoverageIgnore
      */
@@ -211,6 +232,27 @@ class Engine
     }
 
     /**
+     * Recursively replaces - and . in array keys by _
+     * @param array $input
+     * @return array
+     */
+    public function replaceKeys(array $input)
+    {
+        $return = [];
+
+        foreach ($input as $key => $value) {
+            $key = preg_replace('/[.-]/', '_', $key);
+
+            if (is_array($value)) {
+                $value = $this->replaceKeys($value);
+            }
+
+            $return[$key] = $value;
+        }
+        return $return;
+    }
+
+    /**
      * Renders template or takes it from cache
      *
      * @param $template
@@ -229,26 +271,52 @@ class Engine
         $tokenizer = new Tokenizer($this->getTokenRepository());
         $compiler = new Compiler();
 
+        $headersArray = [];
+        $headersList = headers_list();
+
+        foreach ($headersList as $item) {
+            list($header, $content) = explode(':', $item);
+
+            $headersArray[$header] = $content;
+        }
+
+        $vars['server_request'] = [
+            'globals' => [
+                'get' => $_GET,
+                'post' => $_POST,
+                'request' => $_REQUEST,
+                'server' => $_SERVER,
+                'cookie' => $_COOKIE,
+                'session' => $_SESSION ?? null,
+            ],
+            'headers' => $headersArray
+        ];
+
+        $vars = $this->replaceKeys($vars);
+
         /** Injecting variables into the template */
         extract($vars);
 
         /** Starting output buffering */
         ob_start();
 
-        if (file_exists($this->getTemplatesPath() . $template)) {
-            $templateString = file_get_contents($this->getTemplatesPath() . $template);
+        if(!$this->isDirectInputMode()) {
+            if (file_exists($this->getTemplatesPath() . $template)) {
+                $templateString = file_get_contents($this->getTemplatesPath() . $template);
+            } else {
+                ob_end_clean();
 
-            Registry::add('template_path', $this->getTemplatesPath());
-
-            $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
-
-            eval("?>" . $this->getRenderedTemplateString());
-
+                throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
+            }
         } else {
-            ob_end_clean();
-
-            throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
+            $templateString = $template;
         }
+
+        Registry::add('template_path', $this->getTemplatesPath());
+
+        $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
+
+        eval("?>" . $this->getRenderedTemplateString());
 
         $endingMark = microtime(true);
         $endingMemoryUsage = memory_get_usage();

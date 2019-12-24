@@ -1,4 +1,4 @@
-![Coverage](https://img.shields.io/badge/coverage-74%25-yellow)
+![Coverage](https://img.shields.io/badge/coverage-99.16%25-green)
 ![GitHub repo size](https://img.shields.io/github/repo-size/pixaye/puff)
 ![Packagist](https://img.shields.io/packagist/l/pixaye/puff)
 ![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
@@ -46,7 +46,8 @@ Hello, i am [[ variable ]]
 </html>
 ````
 
-**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.
+**Important!** Don't forget to initialze CoreModule here if you need all basic statements, such as **for**, **if-else**, etc.  
+**Also important!** Puff automatically converts '-' and '.' symbols into '_' in variable's name.
 
 ## Specification
 
