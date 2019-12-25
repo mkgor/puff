@@ -87,7 +87,7 @@ If you are not specified templates directory path, you should set template path 
 
 **Important!** Don't forget, that you are injecting all variables from current template into importing template. If template which you are importing using some variable (for example - it is displaying page title in header), you should specify it in **render** method
 ````html
-[% import url='base.puff.html' %]
+[% import src='base.puff.html' %]
 
 <body>
 <div class='content'>
