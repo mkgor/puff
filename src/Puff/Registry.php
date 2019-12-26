@@ -43,6 +43,16 @@ class Registry
     }
 
     /**
+     * @param array $items
+     */
+    public static function addMultiple(array $items)
+    {
+        foreach($items as $key => $value) {
+            self::add($key, $value);
+        }
+    }
+
+    /**
      * Insert value into existing registry item
      *
      * @param $key
