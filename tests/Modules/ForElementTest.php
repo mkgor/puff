@@ -30,6 +30,31 @@ class ForElementTest extends TestCase
             'b' => 2,
             'c' => 3
         ]]));
+    }
 
+    public function testIterator()
+    {
+
+        $engine = new Engine([
+            'modules' => [
+                new CoreModule()
+            ]
+        ]);
+
+        $engine->setDirectInputMode(true);
+
+        $this->assertEquals('012', $engine->render('[% for numbers in number %][[ iterator->key() ]][% end %]', ['numbers' => [1,2,3]]));
+        $this->assertEquals('1', $engine->render('[% for array in item %][[ iterator->exists("something") ]][% end %]', ['array' => [
+            'something' => 'test'
+        ]]));
+        $this->assertEquals('test', $engine->render('[% for array in item %][[ iterator->current() ]][% end %]', ['array' => [
+            'something' => 'test'
+        ]]));
+        $this->assertEquals('1', $engine->render('[% for array in item %][[ iterator->valid() ]][% end %]', ['array' => [
+            'something' => 'test'
+        ]]));
+        $this->assertEquals('012345123', $engine->render('[% for array in item %][[ iterator->key() ]][% if iterator->key() == 5 %][[ iterator->rewind() ]][% end %][% end %]', ['array' => [
+            1,2,3,4,5,6,7,8,9
+        ]]));
     }
 }

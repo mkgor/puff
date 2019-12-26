@@ -4,13 +4,14 @@ namespace Puff\Modules\Core;
 
 use Puff\Modules\Core\Element\ElseElement;
 use Puff\Modules\Core\Element\EndElement;
-use Puff\Modules\Core\Element\ForElement;
+use Puff\Modules\Core\Element\ForElement\ForElement;
 use Puff\Modules\Core\Element\IfElement;
 use Puff\Modules\Core\Element\ImportElement;
 use Puff\Modules\Core\Element\SetElement;
 use Puff\Modules\Core\Element\ShowElement;
 use Puff\Modules\Core\Filter\TransliterationFilter;
 use Puff\Modules\Core\Filter\UpperCaseFilter;
+use Puff\Modules\Core\Filter\UnsafeFilter;
 use Puff\Modules\ModuleInterface;
 
 /**
@@ -39,7 +40,8 @@ class CoreModule implements ModuleInterface
 
             'filters' => [
                 'transliterate' => TransliterationFilter::class,
-                'uppercase' => UpperCaseFilter::class
+                'uppercase' => UpperCaseFilter::class,
+                'unsafe' => UnsafeFilter::class
             ]
         ];
     }

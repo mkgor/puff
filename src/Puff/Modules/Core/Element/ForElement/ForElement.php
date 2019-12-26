@@ -1,14 +1,13 @@
 <?php
 
 
-namespace Puff\Modules\Core\Element;
+namespace Puff\Modules\Core\Element\ForElement;
 
 
 use Puff\Compilation\Element\AbstractElement;
 use Puff\Compilation\Service\FilterStringBuilder;
 use Puff\Compilation\Service\VariableTransliterator;
 use Puff\Registry;
-use Puff\Tokenization\Configuration;
 use Puff\Tokenization\Syntax\SyntaxInterface;
 
 class ForElement extends AbstractElement
@@ -51,8 +50,11 @@ class ForElement extends AbstractElement
             $itemString = VariableTransliterator::transliterate(trim($attributes['item']));
         }
 
-        return sprintf("%s<?php foreach(%s as %s) { ?>",
+        $iterator = '$iterator = new Puff\Modules\Core\Element\ForElement\Iterator('.$iterate.'); ';
+
+        return sprintf('%s<?php %s foreach(%s as %s) { $iterator->next() ?>',
             $filterString,
+            $iterator,
             $iterate,
             $itemString
         );

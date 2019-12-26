@@ -26,6 +26,10 @@ class ShowElement extends AbstractElement
         $filtersString = null;
         $compiledVariable = VariableTransliterator::transliterate($attributes['data-source']);
 
+        if(!isset($attributes['filters']) || !in_array('unsafe', $attributes['filters'])) {
+            $compiledVariable = sprintf("htmlentities(%s)", $compiledVariable);
+        }
+
         if(is_array($attributes['filters'])) {
             $builderResult = $filtersStringBuilder->buildString($attributes['filters'], $compiledVariable);
             $compiledVariable = $builderResult['tmp_variable'];
