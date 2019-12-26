@@ -5,7 +5,7 @@
 
 # Puff
 
-Hackable and lightweight template engine for PHP, which is inspired by Twig. 
+Hackable and lightning fast template engine for PHP, which is inspired by Twig. 
 
 ## Contents
 - [Requirments](https://github.com/pixaye/puff#requirments)
