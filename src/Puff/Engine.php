@@ -11,6 +11,9 @@ use Puff\Exception\PuffException;
 use Puff\Modules\ModuleInterface;
 use Puff\Tokenization\Repository\TokenRepository;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
+use Puff\Tokenization\Syntax\AbstractSyntax;
+use Puff\Tokenization\Syntax\BaseSyntax;
+use Puff\Tokenization\Syntax\SyntaxInterface;
 use Puff\Tokenization\Tokenizer;
 use ReflectionClass;
 use ReflectionException;
@@ -53,6 +56,31 @@ class Engine
      * @var bool
      */
     private $directInputMode = false;
+
+    /**
+     * @var SyntaxInterface
+     */
+    private $syntax;
+
+    /**
+     * @return SyntaxInterface
+     * @codeCoverageIgnore
+     */
+    public function getSyntax(): SyntaxInterface
+    {
+        return $this->syntax;
+    }
+
+    /**
+     * @param SyntaxInterface $syntax
+     */
+    public function setSyntax(SyntaxInterface $syntax): void
+    {
+        Registry::add('syntax', $syntax);
+
+        $this->syntax = $syntax;
+    }
+
 
     /**
      * @return bool
@@ -181,6 +209,8 @@ class Engine
         $registeredKeywords = [];
         $registeredFilters = [];
 
+        $this->setSyntax(new BaseSyntax());
+
         if (!isset($configuration['modules']) || empty($configuration['modules']) || !is_array($configuration['modules'])) {
             throw new PuffException('There are no modules initialized.');
         }
@@ -220,9 +250,17 @@ class Engine
                     }
                     $registeredFilters = array_merge($registeredFilters, $moduleData['filters']);
                 }
+
+                if(isset($moduleData['syntax'])) {
+                    $this->setSyntax($moduleData['syntax']);
+                }
             } else {
                 throw new PuffException('Invalid value provided to engine constructor');
             }
+        }
+
+        if(isset($configuration['syntax'])) {
+            $this->setSyntax($configuration['syntax']);
         }
 
         Registry::add('initialized_modules', $this->initializedModules);

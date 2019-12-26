@@ -7,7 +7,9 @@ namespace Puff\Modules\Core\Element;
 use Puff\Compilation\Element\AbstractElement;
 use Puff\Compilation\Service\FilterStringBuilder;
 use Puff\Compilation\Service\VariableTransliterator;
+use Puff\Registry;
 use Puff\Tokenization\Configuration;
+use Puff\Tokenization\Syntax\SyntaxInterface;
 
 class ForElement extends AbstractElement
 {
@@ -21,11 +23,14 @@ class ForElement extends AbstractElement
      */
     public function process(array $attributes)
     {
+        /** @var SyntaxInterface $syntax */
+        $syntax = Registry::get('syntax');
+
         $filterStringBuilder = new FilterStringBuilder();
         $filterString = null;
 
         if(strpos($attributes['iterate'], '~')) {
-            $iterateExplode = preg_split(Configuration::FILTER_SPLIT_REGEXP, $attributes['iterate']);
+            $iterateExplode = preg_split($syntax->buildFilterSeparatorRegex(), $attributes['iterate']);
 
             $builderResult = $filterStringBuilder->buildString(array_slice($iterateExplode, 1), VariableTransliterator::transliterate(array_shift($iterateExplode)));
 
