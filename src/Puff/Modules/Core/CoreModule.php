@@ -11,6 +11,7 @@ use Puff\Modules\Core\Element\SetElement;
 use Puff\Modules\Core\Element\ShowElement;
 use Puff\Modules\Core\Filter\TransliterationFilter;
 use Puff\Modules\Core\Filter\UpperCaseFilter;
+use Puff\Modules\Core\Filter\UnsafeFilter;
 use Puff\Modules\ModuleInterface;
 
 /**
@@ -39,7 +40,8 @@ class CoreModule implements ModuleInterface
 
             'filters' => [
                 'transliterate' => TransliterationFilter::class,
-                'uppercase' => UpperCaseFilter::class
+                'uppercase' => UpperCaseFilter::class,
+                'unsafe' => UnsafeFilter::class
             ]
         ];
     }
