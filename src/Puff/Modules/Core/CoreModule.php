@@ -4,7 +4,7 @@ namespace Puff\Modules\Core;
 
 use Puff\Modules\Core\Element\ElseElement;
 use Puff\Modules\Core\Element\EndElement;
-use Puff\Modules\Core\Element\ForElement;
+use Puff\Modules\Core\Element\ForElement\ForElement;
 use Puff\Modules\Core\Element\IfElement;
 use Puff\Modules\Core\Element\ImportElement;
 use Puff\Modules\Core\Element\SetElement;
