@@ -172,4 +172,24 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals("test", $result);
     }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Puff\Exception\PuffException
+     */
+    public function testSyntaxInjection()
+    {
+        $this->engineInstance = new Engine([
+            'modules' => [
+                new \Puff\Modules\Core\CoreModule(),
+            ],
+            'syntax' => new \Tests\Resources\TestSyntax()
+        ]);
+
+        $this->engineInstance->setDirectInputMode(true);
+
+        $result = $this->engineInstance->render("[# set var = 'test' #][[ var ]]");
+
+        $this->assertEquals("test", $result);
+    }
 }

@@ -4,7 +4,9 @@
 namespace Puff\Compilation\Element;
 
 use Puff\Exception\PuffException;
+use Puff\Registry;
 use Puff\Tokenization\Configuration;
+use Puff\Tokenization\Syntax\SyntaxInterface;
 
 /**
  * Class AbstractElement
@@ -19,10 +21,13 @@ abstract class AbstractElement implements ElementInterface
      * @return array
      */
     public function handleAttributes($tokenAttributes) {
+        /** @var SyntaxInterface $syntax */
+        $syntax = Registry::get('syntax');
+
         $tokenAttributesArray = [];
 
         foreach($tokenAttributes as $tokenAttribute) {
-            list($attribute, $value) = explode(Configuration::EQUALITY_SIGNATURE, $tokenAttribute);
+            list($attribute, $value) = explode($syntax->getEqualitySymbol(), $tokenAttribute);
 
             $tokenAttributesArray[$attribute] = trim($value, '\'"');
         }

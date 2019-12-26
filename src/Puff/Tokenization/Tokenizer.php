@@ -3,13 +3,13 @@
 namespace Puff\Tokenization;
 
 use Puff\Factory\ElementClassFactory;
-use Puff\Compilation\Element\ElementInterface;
 use Puff\Exception\InvalidKeywordException;
 use Puff\Exception\PuffException;
+use Puff\Registry;
 use Puff\Tokenization\Entity\Token;
 use Puff\Tokenization\Repository\TokenRepository;
-use Puff\Exception\InvalidArgumentException;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
+use Puff\Tokenization\Syntax\SyntaxInterface;
 
 /**
  * Class Tokenizer
@@ -40,8 +40,14 @@ class Tokenizer
      */
     public function tokenize(string $string)
     {
-        $expressionsRegexp = preg_quote(Configuration::EXPRESSION_SIGNATURE[0]) . "(.+?)" . preg_quote(Configuration::EXPRESSION_SIGNATURE[1]);
-        $printRegexp = preg_quote(Configuration::PRINT_SIGNATURE[0]) . "(.+?)" . preg_quote(Configuration::PRINT_SIGNATURE[1]);
+        /** @var SyntaxInterface $syntax */
+        $syntax = Registry::get('syntax');
+
+        $elementTag = $syntax->getElementTag();
+        $variableTag = $syntax->getVariableTag();
+
+        $expressionsRegexp = preg_quote($elementTag[0]) . "(.+?)" . preg_quote($elementTag[1]);
+        $printRegexp = preg_quote($variableTag[0]) . "(.+?)" . preg_quote($variableTag[1]);
 
         preg_match_all("/{$expressionsRegexp}/m", $string, $expressions, PREG_SET_ORDER, 0);
         preg_match_all("/{$printRegexp}/m", $string, $print, PREG_SET_ORDER, 0);
@@ -60,8 +66,8 @@ class Tokenizer
         }
 
         foreach($print as $item) {
-            if(preg_match(Configuration::FILTER_SPLIT_REGEXP, $item[1])) {
-                $itemExploded = preg_split(Configuration::FILTER_SPLIT_REGEXP, $item[1]);
+            if(preg_match($syntax->buildFilterSeparatorRegex(), $item[1])) {
+                $itemExploded = preg_split($syntax->buildFilterSeparatorRegex(), $item[1]);
 
                 $source = trim($itemExploded[0]);
                 $filters = array_slice(array_map('trim', $itemExploded), 1);

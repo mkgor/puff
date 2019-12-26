@@ -1,11 +1,11 @@
-![Coverage](https://img.shields.io/badge/coverage-99.16%25-green)
+![Coverage](https://img.shields.io/badge/coverage-99.22%25-green)
 ![GitHub repo size](https://img.shields.io/github/repo-size/pixaye/puff)
 ![Packagist](https://img.shields.io/packagist/l/pixaye/puff)
 ![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
 
 # Puff
 
-Puff is a flexible and lightweight template engine for PHP, which is inspired by Twig. 
+Hackable and lightweight template engine for PHP, which is inspired by Twig. 
 
 ## Requirments
 
@@ -343,3 +343,50 @@ class UpperCaseFilter implements FilterInterface
 ````
 
 Value, which **handle** method returns, will be assigned to variable
+
+## Syntax editing
+
+You can configure some elements of syntax, such as symbols which are Puff using in tags,
+equality symbol, filter separator symbol and etc.
+
+To do this, you should create new class, which can implements **Puff\Tokenization\Syntax\SyntaxInterface** or 
+extends **Puff\Tokenization\Syntax\AbstractSyntax**. Let's see how it works with **AbstractSyntax**
+
+````php
+<?php
+
+
+namespace Puff\Tokenization\Syntax;
+
+/**
+ * Class NewSyntax
+ * @package Puff\Tokenization\Syntax
+ */
+class NewSyntax extends AbstractSyntax
+{
+    public function getElementTag() : array{
+        return ["(@", "@)"];
+    }
+}
+````
+
+So, we are specified new element tag's symbols. To make it work, you should set it in the configuration array in **Engine**
+constructor, or set it in **Module**'s setUp() method.
+
+````php
+<?php
+$engineInstance = new Engine([
+    'modules' => [
+        new \Puff\Modules\Core\CoreModule(),
+    ],
+    'syntax' => new MySyntax()
+]);
+````
+
+Now, all tags should use new syntax, let's see how we should update template
+
+````html
+(@ if variable == 1 @)
+    <span>Syntax updated!</span>
+(@ end @)
+````
