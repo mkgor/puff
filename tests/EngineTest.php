@@ -170,9 +170,6 @@ class EngineTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        echo $this->engineInstance->getRenderedTemplateString();
-
-
         $this->assertEquals("test", $result);
     }
 

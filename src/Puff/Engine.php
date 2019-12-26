@@ -58,9 +58,54 @@ class Engine
     private $directInputMode = false;
 
     /**
+     * @var string
+     */
+    private $cacheDirectory;
+
+    /**
+     * @var bool
+     */
+    private $cacheEnabled = false;
+
+    /**
      * @var SyntaxInterface
      */
     private $syntax;
+
+    /**
+     * @return bool
+     */
+    public function isCacheEnabled(): bool
+    {
+        return $this->cacheEnabled;
+    }
+
+    /**
+     * @param bool $cacheEnabled
+     * @codeCoverageIgnore
+     */
+    public function setCacheEnabled(bool $cacheEnabled): void
+    {
+        $this->cacheEnabled = $cacheEnabled;
+    }
+
+    /**
+     * @return string
+     * @codeCoverageIgnore
+     */
+    public function getCacheDirectory(): ?string
+    {
+        return $this->cacheDirectory;
+    }
+
+    /**
+     * @param string $cacheDirectory
+     * @codeCoverageIgnore
+     */
+    public function setCacheDirectory(?string $cacheDirectory): void
+    {
+        $this->cacheDirectory = $cacheDirectory;
+    }
 
     /**
      * @return SyntaxInterface
@@ -313,6 +358,8 @@ class Engine
         $headersArray = [];
         $headersList = headers_list();
 
+        $fullpath = $this->getTemplatesPath() . $template;
+
         foreach ($headersList as $item) {
             list($header, $content) = explode(':', $item);
 
@@ -340,20 +387,37 @@ class Engine
         ob_start();
 
         if(!$this->isDirectInputMode()) {
-            if (file_exists($this->getTemplatesPath() . $template)) {
-                $templateString = file_get_contents($this->getTemplatesPath() . $template);
+            if (file_exists($fullpath)) {
+                $templateString = file_get_contents($fullpath);
             } else {
                 ob_end_clean();
 
-                throw new PuffException('Template not found on ' . $this->getTemplatesPath() . $template);
+                throw new PuffException('Template not found on ' . $fullpath);
             }
         } else {
             $templateString = $template;
         }
-
         Registry::add('template_path', $this->getTemplatesPath());
 
-        $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
+        if($this->isCacheEnabled()) {
+            Registry::add('cache_enabled', true);
+            Registry::add('cache_dir', $this->getCacheDirectory());
+
+            $cacher = new Cacher($this->getCacheDirectory());
+
+            if ($cache = $cacher->get($fullpath, $templateString)) {
+                $this->setRenderedTemplateString($cache);
+            } else {
+                $compiled = $compiler->compile($tokenizer->tokenize($templateString), $templateString);
+                $this->setRenderedTemplateString($compiled);
+
+                $cacher->write($fullpath, $templateString, $compiled);
+            }
+        } else {
+            Registry::add('cache_enabled', false);
+
+            $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
+        }
 
         eval("?>" . $this->getRenderedTemplateString());
 
@@ -372,12 +436,17 @@ class Engine
                 ]
             ]);
 
+            if($this->isCacheEnabled()) {
+                $engine->setCacheDirectory($this->getCacheDirectory() ?? __DIR__ . '/../cache');
+                $engine->setCacheEnabled(true);
+            }
+
             echo $engine->render(__DIR__ . '/Resources/templates/benchmark.puff.html', $benchmarkResults);
         }
 
         /** Returning compiled HTML code */
         $result = ob_get_clean();
 
-        return $result;
+        return trim($result);
     }
 }
