@@ -263,10 +263,11 @@ class Engine
             $this->setSyntax($configuration['syntax']);
         }
 
-        Registry::add('initialized_modules', $this->initializedModules);
-
-        Registry::add('registered_elements', $registeredKeywords);
-        Registry::add('registered_filters', $registeredFilters);
+        Registry::addMultiple([
+            'initialized_modules' => $this->initializedModules,
+            'registered_elements' => $registeredKeywords,
+            'registered_filters'  => $registeredFilters
+        ]);
     }
 
     /**
