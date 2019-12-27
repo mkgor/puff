@@ -1,4 +1,4 @@
-![Coverage](https://img.shields.io/badge/coverage-99.04%25-green)
+![Coverage](https://img.shields.io/badge/coverage-99.14%25-green)
 ![GitHub repo size](https://img.shields.io/github/repo-size/pixaye/puff)
 ![Packagist](https://img.shields.io/packagist/l/pixaye/puff)
 ![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
@@ -16,6 +16,7 @@ Hackable and lightweight template engine for PHP, which is inspired by Twig.
     - [If-else](https://github.com/pixaye/puff#if-else)
     - [Import](https://github.com/pixaye/puff#import)
     - [Set](https://github.com/pixaye/puff#set)
+    - [Extends and Position](https://github.com/pixaye/puff#extends-and-position)
 - [Filters](https://github.com/pixaye/puff#filters-system)
 - [Extensions system](https://github.com/pixaye/puff#extensions-system)
     - [Making new statement(element)](https://github.com/pixaye/puff#making-new-statement-element)
@@ -123,6 +124,36 @@ Creates/Updates variable
 
 <!-- will display 'test2' -->
 <b>[[ variable ]]</b>
+````
+
+### Extends and Position
+Use this tags to define the parent template and load data from the current template into it using the Position tag.
+
+Usage:
+
+Main template
+````html
+[% position name="title" %]
+Home page
+[% endposition %]
+
+[% position name="content" %]
+Hello, [[ name ]]
+[% endposition %]
+
+[% extends src="base.puff.html" %]
+````
+
+Parent template
+````html
+<html>
+<head>
+<title>[% position for="title" %]</title>
+</head>
+<body>
+[% position for="content' %]
+</body>
+</html>
 ````
 
 ## Filters system
