@@ -4,9 +4,12 @@ namespace Puff\Modules\Core;
 
 use Puff\Modules\Core\Element\ElseElement;
 use Puff\Modules\Core\Element\EndElement;
+use Puff\Modules\Core\Element\ExtendsElement;
 use Puff\Modules\Core\Element\ForElement\ForElement;
 use Puff\Modules\Core\Element\IfElement;
 use Puff\Modules\Core\Element\ImportElement;
+use Puff\Modules\Core\Element\NonFunctionalElement;
+use Puff\Modules\Core\Element\PositionElement;
 use Puff\Modules\Core\Element\SetElement;
 use Puff\Modules\Core\Element\ShowElement;
 use Puff\Modules\Core\Filter\TransliterationFilter;
@@ -36,6 +39,9 @@ class CoreModule implements ModuleInterface
                 'for' => new ForElement(),
                 'else' => new ElseElement(),
                 'end' => new EndElement(),
+                'position' => new PositionElement(),
+                'endposition' => new NonFunctionalElement(),
+                'extends' => new ExtendsElement()
             ],
 
             'filters' => [

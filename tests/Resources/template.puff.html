@@ -1,0 +1,11 @@
+[% position name="content" %]
+    [% if is_float(variable2) and variable2 < 35 %]
+        [[ variable2 ~ ceil ]]
+    [% end %]
+[% endposition %]
+
+[% position name="content2" %]
+[[ variable1 ]]
+[% endposition %]
+
+[% extends src="base.puff.html" %]
