@@ -54,6 +54,10 @@ class ImportElement extends AbstractElement
             throw new PuffException("Template import error. Could not find template on `".$templatePath."`");
         }
 
-        return $compiler->compile($tokenizer->tokenize($importedTemplate), $importedTemplate);
+        $importID = 'import_' . random_int(0,10000);
+
+        Registry::add($importID, $importedTemplate);
+
+        return $compiler->compile($tokenizer->tokenize($importedTemplate), $importID);
     }
 }
