@@ -30,7 +30,7 @@ class ExtendsElementTest extends TestCase
             'variable2' => 33.33123123214
         ]);
 
-        $this->assertEquals('34    test', $result);
+        $this->assertEquals('34test', $result);
     }
 
     /**
