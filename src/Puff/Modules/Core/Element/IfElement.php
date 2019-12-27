@@ -21,7 +21,7 @@ class IfElement extends AbstractElement
     {
         /** Checking predicate for PHP keywords and transliterating variables from Puff syntax to PHP */
         $predicate = preg_replace_callback('/\b(?:(?!null|true|false|or|and|isset|empty)(?!\"])[a-zA-Z][a-zA-Z.(->)0-9]+(?!\")+)+\b/', function($item) {
-            return VariableTransliterator::transliterate($item[0]);
+            return (!function_exists($item[0])) ? VariableTransliterator::transliterate($item[0]) : $item;
         }, $attributes['predicate']);
 
         return sprintf("<?php if(%s) { ?>", $predicate);
