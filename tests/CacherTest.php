@@ -53,6 +53,8 @@ class CacherTest extends TestCase
             }
         }
 
-        rmdir(__DIR__ . '/cache');
+        if(is_dir(__DIR__ . '/cache')) {
+            rmdir(__DIR__ . '/cache');
+        }
     }
 }
