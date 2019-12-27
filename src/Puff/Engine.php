@@ -398,6 +398,7 @@ class Engine
             $templateString = $template;
         }
         Registry::add('template_path', $this->getTemplatesPath());
+        Registry::add('main_template_string', $templateString);
 
         if($this->isCacheEnabled()) {
             Registry::add('cache_enabled', true);
@@ -408,7 +409,7 @@ class Engine
             if ($cache = $cacher->get($fullpath, $templateString)) {
                 $this->setRenderedTemplateString($cache);
             } else {
-                $compiled = $compiler->compile($tokenizer->tokenize($templateString), $templateString);
+                $compiled = $compiler->compile($tokenizer->tokenize($templateString), 'main_template_string');
                 $this->setRenderedTemplateString($compiled);
 
                 $cacher->write($fullpath, $templateString, $compiled);
@@ -416,9 +417,8 @@ class Engine
         } else {
             Registry::add('cache_enabled', false);
 
-            $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), $templateString));
+            $this->setRenderedTemplateString($compiler->compile($tokenizer->tokenize($templateString), 'main_template_string'));
         }
-
         eval("?>" . $this->getRenderedTemplateString());
 
         $endingMark = microtime(true);
