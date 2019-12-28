@@ -8,6 +8,7 @@ use Puff\Exception\PuffException;
 use Puff\Registry;
 use Puff\Tokenization\Entity\Token;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
+use Puff\Tokenization\Syntax\SyntaxInterface;
 
 /**
  * Class Compiler
@@ -15,6 +16,19 @@ use Puff\Tokenization\Repository\TokenRepositoryInterface;
  */
 class Compiler
 {
+    /**
+     * @var SyntaxInterface
+     */
+    private $syntax;
+
+    /**
+     * Compiler constructor.
+     */
+    public function __construct()
+    {
+        $this->syntax = Registry::get('syntax');
+    }
+
     /**
      * Replaces all tokens in the template by PHP code
      *
@@ -28,6 +42,7 @@ class Compiler
     public function compile(TokenRepositoryInterface $tokenRepository, $stringKey)
     {
         if(!empty($tokenRepository->getContainer())) {
+
             /** @var Token $token */
             foreach ($tokenRepository->getContainer() as $token) {
                 $elementClassFactory = new ElementClassFactory();
@@ -54,7 +69,12 @@ class Compiler
             }
         }
 
-        return Registry::get($stringKey);
+        $templateString = Registry::get($stringKey);
+
+        $escapeSymbol = $this->escapeSlashes(preg_quote($this->syntax->getEscapeSymbol()));
+        $templateString = preg_replace('/'.$escapeSymbol.'(?<tag>('.preg_quote($this->syntax->getElementTag()[0]).'|'.preg_quote($this->syntax->getVariableTag()[0]).'))/', '$1', $templateString);
+
+        return $templateString;
     }
 
     /**
@@ -63,9 +83,20 @@ class Compiler
      * @param string $text
      * @return mixed
      */
-    private function replaceToken($search, $replace, $text){
-        $position = strpos($text, $search);
+    private function replaceToken($search, $replace, $text)
+    {
+        $escapeSymbol = $this->escapeSlashes(preg_quote($this->syntax->getEscapeSymbol()));
 
-        return $position !== false ? substr_replace($text, $replace, $position, strlen($search)) : $text;
+        return preg_replace("/".$escapeSymbol.".+?(*SKIP)(*F)|".$this->escapeSlashes(preg_quote($search)) ."/", $replace, $text,1);
+    }
+
+    /**
+     * @param $string
+     *
+     * @return string|string[]|null
+     */
+    private function escapeSlashes($string)
+    {
+        return preg_replace("/\//", '\\/', $string);
     }
 }

@@ -49,6 +49,11 @@ abstract class AbstractSyntax implements SyntaxInterface
         return "~";
     }
 
+    public function getEscapeSymbol(): string
+    {
+        return "//";
+    }
+
     /**
      * @return string
      */
