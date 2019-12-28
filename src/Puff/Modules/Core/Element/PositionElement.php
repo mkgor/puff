@@ -45,6 +45,7 @@ class PositionElement extends AbstractElement
             $code =  preg_replace_callback('/(^\s+|^\t+)/m', function() {
                 return null;
             }, $matches[1]);
+
             Registry::add('position_' . $attributes['name'], trim($code));
         }
 
