@@ -4,6 +4,7 @@
 ![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
 
 # Puff
+![Logo](https://i.imgur.com/6wEUCeH.jpg)
 
 Hackable and lightning fast template engine for PHP, which is inspired by Twig. 
 
