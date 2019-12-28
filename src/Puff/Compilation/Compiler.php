@@ -8,6 +8,7 @@ use Puff\Exception\PuffException;
 use Puff\Registry;
 use Puff\Tokenization\Entity\Token;
 use Puff\Tokenization\Repository\TokenRepositoryInterface;
+use Puff\Tokenization\Syntax\SyntaxInterface;
 
 /**
  * Class Compiler
@@ -54,7 +55,14 @@ class Compiler
             }
         }
 
-        return Registry::get($stringKey);
+        /** @var SyntaxInterface $syntax */
+        $syntax = Registry::get('syntax');
+        $templateString = Registry::get($stringKey);
+
+        $escapeSymbol = preg_replace("/\//", '\\/', preg_quote($syntax->getEscapeSymbol()));
+        $templateString = preg_replace('/'.$escapeSymbol.'(?<tag>('.preg_quote($syntax->getElementTag()[0]).'|'.preg_quote($syntax->getVariableTag()[0]).'))/', '$1', $templateString);
+
+        return $templateString;
     }
 
     /**

@@ -38,9 +38,15 @@ interface SyntaxInterface
     public function getFilterSeparator(): string;
 
     /**
+     * @return string
+     */
+    public function getEscapeSymbol(): string;
+
+    /**
      * Build regular expression to recognize filters in variable tag
      *
      * @return string
      */
     public function buildFilterSeparatorRegex(): string;
+
 }

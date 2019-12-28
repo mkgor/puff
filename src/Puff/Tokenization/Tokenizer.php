@@ -26,6 +26,7 @@ class Tokenizer
     public function __construct(TokenRepositoryInterface $tokenRepository)
     {
         $this->tokenRepository = $tokenRepository;
+        $this->tokenRepository->setContainer([]);
     }
 
     /**
@@ -45,9 +46,10 @@ class Tokenizer
 
         $elementTag = $syntax->getElementTag();
         $variableTag = $syntax->getVariableTag();
+        $escapeSymbol = preg_replace("/\//", '\\/', preg_quote($syntax->getEscapeSymbol()));
 
-        $expressionsRegexp = preg_quote($elementTag[0]) . "(.+?)" . preg_quote($elementTag[1]);
-        $printRegexp = preg_quote($variableTag[0]) . "(.+?)" . preg_quote($variableTag[1]);
+        $expressionsRegexp = $escapeSymbol.".*(*SKIP)(*F)|". preg_quote($elementTag[0]) . "(.+?)" . preg_quote($elementTag[1]);
+        $printRegexp = $escapeSymbol.".*(*SKIP)(*F)|". preg_quote($variableTag[0]) . "(.+?)" . preg_quote($variableTag[1]);
 
         preg_match_all("/{$expressionsRegexp}/m", $string, $expressions, PREG_SET_ORDER, 0);
         preg_match_all("/{$printRegexp}/m", $string, $print, PREG_SET_ORDER, 0);
