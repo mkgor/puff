@@ -442,7 +442,7 @@ Now, all tags should use new syntax, let's see how we should update template
 
 To escape tag, you should set escaping symbols before some tag to tell compiler to ignore it. 
 
-Basic escaping symbols in Puff is ``//``, but you can edit it by setting your own Syntax class
+Default escaping symbols in Puff is ``//``, but you can edit it by setting your own Syntax class
 
 ````html
 [% set variable = 1 %]
@@ -451,7 +451,7 @@ Basic escaping symbols in Puff is ``//``, but you can edit it by setting your ow
 //[[variable]]
 ````
 
-Will displays:
+Will display:
 ````
 1
 [[ variable ]]
