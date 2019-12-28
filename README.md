@@ -22,6 +22,7 @@ Hackable and lightning fast template engine for PHP, which is inspired by Twig.
     - [Making new statement(element)](https://github.com/pixaye/puff#making-new-statement-element)
     - [Making new filter](https://github.com/pixaye/puff#making-new-filter)
 - [Syntax editing](https://github.com/pixaye/puff#syntax-editing)
+- [Escaping tags](https://github.com/pixaye/puff#escaping-tags)
 
 ## Requirments
 
@@ -435,4 +436,23 @@ Now, all tags should use new syntax, let's see how we should update template
 (@ if variable == 1 @)
     <span>Syntax updated!</span>
 (@ end @)
+````
+
+### Escaping tags
+
+To escape tag, you should set escaping symbols before some tag to tell compiler to ignore it. 
+
+Basic escaping symbols in Puff is ``//``, but you can edit it by setting your own Syntax class
+
+````html
+[% set variable = 1 %]
+[[ variable ]]
+
+//[[variable]]
+````
+
+Will displays:
+````
+1
+[[ variable ]]
 ````
