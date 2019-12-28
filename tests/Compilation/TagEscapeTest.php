@@ -33,7 +33,7 @@ class TagEscapeTest extends TestCase
         $result = $engine->render('[[ variable ]]', ['variable' => 'This is escaped tag']);
         $this->assertEquals('This is escaped tag', $result);
 
-        $result_2 = $engine->render('//[[ variable ]]', ['variable' => 'This is escaped tag']);
-        $this->assertEquals('[[ variable ]]', $result_2);
+        $result_2 = $engine->render("//[[ variable ]] [[ variable ]]", ['variable' => 'This is escaped tag']);
+        $this->assertEquals('[[ variable ]] This is escaped tag', $result_2);
     }
 }
