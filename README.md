@@ -1,7 +1,7 @@
 ![Coverage](https://img.shields.io/badge/coverage-99.14%25-green)
-![GitHub repo size](https://img.shields.io/github/repo-size/pixaye/puff)
-![Packagist](https://img.shields.io/packagist/l/pixaye/puff)
-![GitHub All Releases](https://img.shields.io/github/downloads/pixaye/puff/total)
+![GitHub repo size](https://img.shields.io/github/repo-size/mkgor/puff)
+![Packagist](https://img.shields.io/packagist/l/mkgor/puff)
+![GitHub All Releases](https://img.shields.io/github/downloads/mkgor/puff/total)
 
 # Puff
 ![Logo](https://i.imgur.com/6wEUCeH.jpg)
@@ -9,21 +9,21 @@
 Hackable and lightning fast template engine for PHP, which is inspired by Twig. 
 
 ## Contents
-- [Requirments](https://github.com/pixaye/puff#requirments)
-- [Installation](https://github.com/pixaye/puff#installation)
-- [Quickstart](https://github.com/pixaye/puff#quickstart)
-- [Specification](https://github.com/pixaye/puff#specification) 
-    - [For](https://github.com/pixaye/puff#for)
-    - [If-else](https://github.com/pixaye/puff#if-else)
-    - [Import](https://github.com/pixaye/puff#import)
-    - [Set](https://github.com/pixaye/puff#set)
-    - [Extends and Position](https://github.com/pixaye/puff#extends-and-position)
-- [Filters](https://github.com/pixaye/puff#filters-system)
-- [Extensions system](https://github.com/pixaye/puff#extensions-system)
-    - [Making new statement(element)](https://github.com/pixaye/puff#making-new-statement-element)
-    - [Making new filter](https://github.com/pixaye/puff#making-new-filter)
-- [Syntax editing](https://github.com/pixaye/puff#syntax-editing)
-- [Escaping tags](https://github.com/pixaye/puff#escaping-tags)
+- [Requirments](https://github.com/mkgor/puff#requirments)
+- [Installation](https://github.com/mkgor/puff#installation)
+- [Quickstart](https://github.com/mkgor/puff#quickstart)
+- [Specification](https://github.com/mkgor/puff#specification) 
+    - [For](https://github.com/mkgor/puff#for)
+    - [If-else](https://github.com/mkgor/puff#if-else)
+    - [Import](https://github.com/mkgor/puff#import)
+    - [Set](https://github.com/mkgor/puff#set)
+    - [Extends and Position](https://github.com/mkgor/puff#extends-and-position)
+- [Filters](https://github.com/mkgor/puff#filters-system)
+- [Extensions system](https://github.com/mkgor/puff#extensions-system)
+    - [Making new statement(element)](https://github.com/mkgor/puff#making-new-statement-element)
+    - [Making new filter](https://github.com/mkgor/puff#making-new-filter)
+- [Syntax editing](https://github.com/mkgor/puff#syntax-editing)
+- [Escaping tags](https://github.com/mkgor/puff#escaping-tags)
 
 ## Requirments
 
@@ -35,7 +35,7 @@ Hackable and lightning fast template engine for PHP, which is inspired by Twig.
 Install Puff via composer
 
 ````bash
-composer require pixaye/puff
+composer require mkgor/puff
 ````
 
 ## Quickstart
