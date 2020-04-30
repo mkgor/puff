@@ -1,5 +1,5 @@
 {
-  "name": "pixaye/puff",
+  "name": "mkgor/puff",
   "description": "Flexible and lightweight template engine for PHP",
   "type": "project",
   "require-dev": {
